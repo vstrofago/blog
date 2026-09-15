@@ -10,7 +10,7 @@ summary: "The vulture syndrome: procrastinating is not a discipline problem but 
 
 Abraham Lincoln said it: "**Give me six hours to chop down a tree and I will spend the first four sharpening the axe**", and... it seems I took it too personally.
 
-My father calls it the vulture syndrome, because you spend all your time planning and planning without doing anything.
+My father calls it the "vulture syndrome", because you spend all your time planning and planning without doing anything.
 
 And that is exactly a problem I have been dealing with for a long time, in many areas where I have wanted to express myself or create some kind of content.
 
@@ -32,7 +32,7 @@ It is vital to understand that these patterns tend to consolidate during adolesc
 
 This is where I fall the most: a couple of times a month, or a week? or a day? Let's get to the point:
 
-There is an especially insidious variant: **procrestividad**, or structured procrastination. In that state you keep busy doing "useful" things (organizing files, washing dishes) to avoid the "main course". Experts like Dr. Sharon Saline explain that these finite tasks give us a **false dopamine hit**. They have a clear beginning and a clear end, which makes us feel effective while we avoid the vulnerability of the complex project.
+There is an especially insidious variant: **procrestivity**, or structured procrastination. In that state you keep busy doing "useful" things (organizing files, washing dishes) to avoid the "main course". Experts like Dr. Sharon Saline explain that these finite tasks give us a **false dopamine hit**. They have a clear beginning and a clear end, which makes us feel effective while we avoid the vulnerability of the complex project.
 
 Even the act of "tuning your tools" is a trap. Dr. Maelisa McCaffrey points out how professionals often fall into the loop of "perfecting the template". Changing the format over and over is a way of avoiding the real task; it is a search for safety in the face of the fear of not being good enough.
 

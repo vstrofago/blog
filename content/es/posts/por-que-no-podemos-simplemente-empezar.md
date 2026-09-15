@@ -10,7 +10,7 @@ summary: "El síndrome del zopilote: procrastinar no es un problema de disciplin
 
 Decía Abraham Lincoln: "**Dame seis horas para cortar un árbol y pasaré las primeras cuatro afilando el hacha**", y... parece que me lo tomé demasiado personal.
 
-Mi padre lo llama el síndrome del zopilote, pues uno se pasa el tiempo solo planeando y planeando sin hacer nada.
+Mi padre lo llama el "síndrome del zopilote", pues uno se pasa el tiempo solo planeando y planeando sin hacer nada.
 
 Y eso es exactamente un problema con el que llevo ya mucho tiempo lidiando en muchas áreas en las que he querido expresar o crear algún tipo de contenido.
 
