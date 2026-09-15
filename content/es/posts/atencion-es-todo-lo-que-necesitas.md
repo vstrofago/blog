@@ -1,5 +1,5 @@
 ---
-title: "Atención es todo lo que necesitas, pero nadie da medallas por no hacerlo"
+title: "En aras del “progreso”, la prudencia no da medallas"
 date: 2026-09-15T10:34:42-06:00
 draft: false
 tags: ["ia", "ética", "reconocimiento"]

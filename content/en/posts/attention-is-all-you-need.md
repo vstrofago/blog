@@ -1,5 +1,5 @@
 ---
-title: "Attention is all you need, but nobody hands out medals for not doing it"
+title: "In the name of “progress”, prudence earns no medals"
 date: 2026-09-15T10:34:42-06:00
 draft: false
 tags: ["ai", "ethics", "recognition"]
