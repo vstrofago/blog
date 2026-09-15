@@ -13,3 +13,6 @@ resources/_gen/
 .vscode/
 .idea/
 *.swp
+
+# Local scratch note, not published
+IDEA.md
