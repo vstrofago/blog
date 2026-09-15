@@ -1,0 +1,95 @@
+baseURL = 'https://vstrofago.github.io/blog/'
+title = 'VSTROFAGO'
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = false
+enableRobotsTXT = true
+enableEmoji = true
+languageCode = 'en-US'
+disableKinds = ['taxonomy']
+
+paginate = 10
+
+[languages]
+  [languages.en]
+    languageName = 'English'
+    languageCode = 'en-US'
+    contentDir = 'content/en'
+    title = 'VSTROFAGO'
+    weight = 1
+    [languages.en.params]
+      description = 'Notes, projects and experiments.'
+      DateFormat = 'January 2, 2006'
+      [languages.en.params.homeInfoParams]
+        Title = 'Hi, welcome to VSTROFAGO'
+        Content = 'Notes, projects and experiments. This site is bilingual: English and Spanish.'
+    [[languages.en.menu.main]]
+      name = 'Posts'
+      url = 'posts/'
+      weight = 10
+    [[languages.en.menu.main]]
+      name = 'About'
+      url = 'about/'
+      weight = 20
+
+  [languages.es]
+    languageName = 'Español'
+    languageCode = 'es-ES'
+    contentDir = 'content/es'
+    title = 'VSTROFAGO'
+    weight = 2
+    [languages.es.params]
+      description = 'Notas, proyectos y experimentos.'
+      DateFormat = '2006-01-02'
+      [languages.es.params.homeInfoParams]
+        Title = 'Hola, bienvenido a VSTROFAGO'
+        Content = 'Notas, proyectos y experimentos. Este sitio es bilingüe: inglés y español.'
+    [[languages.es.menu.main]]
+      name = 'Entradas'
+      url = 'posts/'
+      weight = 10
+    [[languages.es.menu.main]]
+      name = 'Acerca'
+      url = 'about/'
+      weight = 20
+
+[params]
+  env = 'production'
+  author = 'VSTROFAGO'
+  defaultTheme = 'auto'
+  disableThemeToggle = false
+  displayFullLangName = false
+  ShowReadingTime = true
+  ShowWordCount = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowRssButtonInSectionTermList = true
+  ShowFullTextinRSS = false
+  ShowToc = true
+  TocOpen = false
+  mainSections = ['posts']
+
+[[params.socialIcons]]
+  name = 'github'
+  url = 'https://github.com/vstrofago'
+[[params.socialIcons]]
+  name = 'rss'
+  url = 'index.xml'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    noClasses = false
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+
+[outputs]
+  home = ['HTML', 'RSS', 'JSON']
