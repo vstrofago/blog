@@ -1,18 +1,20 @@
 baseURL = 'https://vstrofago.github.io/blog/'
 title = 'VSTROFAGO'
+theme = 'PaperMod'
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 enableEmoji = true
-languageCode = 'en-US'
-disableKinds = ['taxonomy']
+ignoreLogs = ['warning-partial-superfluous-prefix']
+locale = 'en-US'
 
-paginate = 10
+[pagination]
+  pagerSize = 10
 
 [languages]
   [languages.en]
-    languageName = 'English'
-    languageCode = 'en-US'
+    label = 'English'
+    locale = 'en-US'
     contentDir = 'content/en'
     title = 'VSTROFAGO'
     weight = 1
@@ -32,8 +34,8 @@ paginate = 10
       weight = 20
 
   [languages.es]
-    languageName = 'Español'
-    languageCode = 'es-ES'
+    label = 'Español'
+    locale = 'es-ES'
     contentDir = 'content/es'
     title = 'VSTROFAGO'
     weight = 2
