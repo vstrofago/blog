@@ -5,4 +5,4 @@ draft: false
 translationKey: "about"
 ---
 
-Página provisional. Aquí irá la descripción de este sitio y de su autor.
+Cosas que pasan por mi mente: escribo cuando algo me da vueltas.

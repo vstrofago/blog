@@ -5,4 +5,4 @@ draft: false
 translationKey: "about"
 ---
 
-Placeholder page. It will hold the description of this site and of its author.
+Things that pass through my mind: I write when something keeps going round in my head.
