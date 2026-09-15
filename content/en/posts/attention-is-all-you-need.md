@@ -10,7 +10,7 @@ summary: "Recognition as symbolic capital: a structure that only rewards those w
 
 I just finished watching *Coyote vs. Acme*. Funny, with a lot of heart, and a few rough edges, sure. But I don't want to talk about movies right now.
 
-What stuck with me was the undercurrent: the shots at big corporations, from unjust animal testing to the ambition to do whatever it takes in the name of "progress."
+What stuck with me was the undercurrent: the shots at big corporations and at the ambition to do whatever it takes in the name of "progress."
 
 That reminded me of another loud story from the past few days. A researcher quit one of the frontier AI labs because he no longer agrees with how the whole industry seems willing to do anything to win the race. He said AI could end human life in under ten years, that the companies know it and still don't take the necessary measures. Colleagues from his own lab backed him up, admitting they don't have a plan to fix it either.
 
@@ -18,7 +18,7 @@ Watching that, and thinking about what we have already seen with other invention
 
 And still you wonder whether a warning is enough after you helped build the thing you fear.
 
-Judgment always arrives late. David Collingridge named the problem in *The Social Control of Technology* (1980): you cannot control a technology when it starts, because you do not yet know what consequences it will bring; and by the time you do know, it has rooted itself too deep to stop. Which is why weapons, cruel testing on animals and humans, the atomic bomb or penicillin all end up filed as genius or brutality *afterward*, never at the moment of deciding. At the moment of deciding there was not enough information.
+Judgment always arrives late. David Collingridge named the problem in *The Social Control of Technology* (1980): you cannot control a technology when it starts, because you do not yet know what consequences it will bring; and by the time you do know, it has rooted itself too deep to stop. Which is why weapons, the atomic bomb or penicillin all end up filed as genius or brutality *afterward*, never at the moment of deciding. At the moment of deciding there was not enough information.
 
 This individual dilemma reveals a deeper pattern that corporations seem to install without anyone noticing: you create the problem and then sell the solution to it, or warn about its possible causes. As long as nothing is known yet, or there is a funding round around the corner, anything goes in the name of "progress." Why? Because in the end what matters is being recognized.
 

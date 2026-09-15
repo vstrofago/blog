@@ -10,7 +10,7 @@ summary: "El reconocimiento como capital simbólico: una estructura que solo pre
 
 Acabo de terminar *Coyote vs. Acme*. Divertida, con corazón, con sus cosillas, sí. Pero no quiero hablar de cine.
 
-Lo que se me quedó pegado fue el fondo: las críticas a las corporaciones grandes, desde las pruebas injustas con animales hasta la ambición de hacer lo que sea en pos del "progreso".
+Lo que se me quedó pegado fue el fondo: las críticas a las corporaciones grandes y a la ambición de hacer lo que sea en pos del "progreso".
 
 Eso me recordó a otro suceso sonado de estos días. Un investigador renunció a uno de los laboratorios frontera de IA porque ya no está de acuerdo con cómo la industria entera parece dispuesta a hacer cualquier cosa con tal de ganar la carrera. Mencionó que la IA podría acabar con la vida humana en menos de diez años, que las empresas lo saben y aun así no toman las medidas. Lo acompañaron colegas de su propio laboratorio, admitiendo que tampoco tienen un plan para resolverlo.
 
@@ -18,7 +18,7 @@ Viendo esto, y pensando en lo que ya se ha visto con otras invenciones capaces d
 
 Y aun así uno se pregunta si la advertencia basta después de haber contribuido a construir lo que temes.
 
-El juicio siempre llega tarde. David Collingridge le puso nombre al problema en *The Social Control of Technology* (1980): una tecnología no se puede controlar cuando empieza, porque todavía no sabes qué consecuencias va a traer; y cuando por fin lo sabes, ya echó raíces demasiado profundas para frenarla. De ahí que con las armas, las pruebas crueles en animales y humanos, la bomba atómica o la penicilina, todo termine clasificado como genialidad o como brutalidad *después*, nunca en el momento de decidir. En el momento de decidir no había información suficiente.
+El juicio siempre llega tarde. David Collingridge le puso nombre al problema en *The Social Control of Technology* (1980): una tecnología no se puede controlar cuando empieza, porque todavía no sabes qué consecuencias va a traer; y cuando por fin lo sabes, ya echó raíces demasiado profundas para frenarla. De ahí que con las armas, la bomba atómica o la penicilina, todo termine clasificado como genialidad o como brutalidad *después*, nunca en el momento de decidir. En el momento de decidir no había información suficiente.
 
 Este dilema individual revela un patrón más profundo que las corporaciones parecen implantar sin que uno lo note: creas el problema y después vendes la solución al mismo, o adviertes de sus posibles causas. Mientras no se sabe nada o hay una ronda de inversión en puerta, todo vale en pos del "progreso". ¿Por qué? Porque al final lo que importa es ser reconocido.
 
