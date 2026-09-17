@@ -1,0 +1,53 @@
+{{ define "main" }}
+{{- $sections := site.Params.mainSections | default (slice "posts") -}}
+{{- $pages := where site.RegularPages "Section" "in" $sections -}}
+{{- $total := len $pages -}}
+{{- $limit := site.Params.homeLimit | default 5 -}}
+{{- $list := first $limit $pages -}}
+{{- $heroTitle := "" -}}
+{{- $heroLead := "" -}}
+{{- with site.Params.homeInfoParams -}}
+  {{- $heroTitle = .Title -}}
+  {{- $heroLead = .Content -}}
+{{- end -}}
+<div class="vf-frame vf-guide-x">
+
+  <section class="vf-hero vf-stage">
+    <div class="vf-kicker-row">
+      <span class="vf-kicker">{{ site.Title }} · {{ i18n "home" }}</span>
+      <span class="vf-kicker-row__rule"></span>
+      <span class="vf-kicker">{{ $total }} {{ i18n "posts" | lower }}</span>
+    </div>
+    <h1 class="vf-display vf-display--xl vf-hero__title">
+      <span class="vf-underline">{{ with $heroTitle }}{{ . }}{{ else }}{{ site.Title }}{{ end }}</span>
+    </h1>
+    {{- with $heroLead }}
+    <div class="vf-hero__lead vf-rise">{{ . | markdownify }}</div>
+    {{- end }}
+    {{- with .Content }}
+    <div class="vf-hero__lead vf-rise">{{ . }}</div>
+    {{- end }}
+  </section>
+
+  {{- if $list }}
+  {{- partial "entry-featured.html" (dict "page" (index $list 0) "num" (printf "N.º %02d" $total)) }}
+
+  <div class="vf-section-head">
+    <span class="vf-kicker">{{ i18n "moreEntries" }}</span>
+    <span class="vf-kicker-row__rule"></span>
+    <a class="vf-kicker" href="{{ "/posts/" | relLangURL }}">{{ i18n "allEntries" }}&nbsp;→</a>
+  </div>
+
+  <ul class="vf-index">
+    {{- range $i, $p := $list }}
+    {{- if gt $i 0 }}
+    {{- partial "entry-row.html" (dict "page" $p "num" (printf "N.º %02d" (sub $total $i)) "delay" (mul $i 40)) }}
+    {{- end }}
+    {{- end }}
+  </ul>
+  {{- else }}
+  <p class="vf-empty__text">{{ i18n "noPosts" }}</p>
+  {{- end }}
+
+</div>
+{{ end }}

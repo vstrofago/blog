@@ -1,0 +1,145 @@
+/* VSTROFAGO — tema de sintaxis (Hugo/Chroma, basado en clases).
+   Sin colores semánticos: el DS eliminó los estados ok/warn/danger. Todo el código
+   se resuelve con los neutros de papel/tinta y el único cobalto. Cada valor es un
+   token, así que el tema se adapta solo a la variante oscura. */
+
+.chroma {
+  color: var(--text-body);
+  background: none;
+}
+
+/* Comentarios — lo más callado de la placa. */
+.chroma .c,
+.chroma .ch,
+.chroma .cm,
+.chroma .c1,
+.chroma .cs,
+.chroma .cp,
+.chroma .cpf,
+.chroma .cd {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* Palabras clave — el único acento. */
+.chroma .k,
+.chroma .kc,
+.chroma .kd,
+.chroma .kn,
+.chroma .kp,
+.chroma .kr,
+.chroma .kt,
+.chroma .kv,
+.chroma .ow {
+  color: var(--accent-strong);
+  font-weight: 500;
+}
+
+/* Nombres de función / método. */
+.chroma .nf,
+.chroma .fm,
+.chroma .nd {
+  color: var(--text-body);
+  font-weight: 500;
+}
+
+/* Tipos, clases, namespaces. */
+.chroma .nc,
+.chroma .nn,
+.chroma .no,
+.chroma .ne,
+.chroma .nt,
+.chroma .na,
+.chroma .nb,
+.chroma .bp {
+  color: var(--blue-800);
+}
+
+/* Cadenas y afines — sin acento, para que el acento signifique algo. */
+.chroma .s,
+.chroma .sa,
+.chroma .sb,
+.chroma .sc,
+.chroma .dl,
+.chroma .sd,
+.chroma .s2,
+.chroma .se,
+.chroma .sh,
+.chroma .si,
+.chroma .sx,
+.chroma .sr,
+.chroma .s1,
+.chroma .ss {
+  color: var(--text-muted);
+}
+
+/* Números — cifras tabulares, como manda el DS. */
+.chroma .m,
+.chroma .mb,
+.chroma .mf,
+.chroma .mh,
+.chroma .mi,
+.chroma .mo,
+.chroma .il {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Operadores, puntuación, variables. */
+.chroma .o,
+.chroma .p,
+.chroma .n,
+.chroma .nx,
+.chroma .nl,
+.chroma .py,
+.chroma .nv,
+.chroma .vc,
+.chroma .vg,
+.chroma .vi,
+.chroma .vm,
+.chroma .w {
+  color: var(--text-body);
+}
+.chroma .p,
+.chroma .w {
+  color: var(--text-faint);
+}
+
+/* Genéricos (diff, headings, prompts). */
+.chroma .gh,
+.chroma .gu,
+.chroma .gs,
+.chroma .ge {
+  color: var(--accent-strong);
+  font-weight: 500;
+}
+.chroma .gd {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+.chroma .gi { color: var(--accent-strong); }
+.chroma .gt { color: var(--text-faint); }
+.chroma .gr { color: var(--accent-strong); }
+.chroma .gp { color: var(--text-faint); }
+
+/* Error: mismo acento, subrayado ondulado (nada de rojo semántico). */
+.chroma .err {
+  color: var(--accent-strong);
+  text-decoration: underline wavy var(--accent);
+}
+
+/* Números de línea y líneas resaltadas. */
+.chroma .lnt,
+.chroma .ln {
+  color: var(--text-faint);
+  padding-right: var(--sp-4);
+  user-select: none;
+}
+.chroma .lntable { border-spacing: 0; width: auto; }
+.chroma .lntable td { border: 0; padding: 0; }
+.chroma .hl {
+  display: block;
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.chroma .lnlinks { outline: none; text-decoration: none; color: inherit; }

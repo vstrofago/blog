@@ -1,0 +1,20 @@
+{{- /* Placa de contenido. Según TocOpen se muestra abierta o plegada; sin JS la
+       versión plegada sigue siendo abrible (details/summary nativo). */ -}}
+{{- if and site.Params.ShowToc (gt (len .TableOfContents) 80) -}}
+{{- if site.Params.TocOpen -}}
+<nav class="vf-plate vf-toc vf-panel-grid" aria-labelledby="vf-toc-title">
+  <span class="vf-kicker vf-toc__title" id="vf-toc-title">{{ i18n "toc" }}</span>
+  {{ .TableOfContents }}
+</nav>
+{{- else -}}
+<nav class="vf-plate vf-toc vf-panel-grid" aria-labelledby="vf-toc-title">
+  <details>
+    <summary>
+      <span class="vf-kicker vf-toc__title" id="vf-toc-title">{{ i18n "toc" }}</span>
+      <span class="vf-toc__caret" aria-hidden="true">→</span>
+    </summary>
+    {{ .TableOfContents }}
+  </details>
+</nav>
+{{- end -}}
+{{- end -}}

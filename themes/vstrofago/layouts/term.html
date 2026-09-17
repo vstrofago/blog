@@ -1,0 +1,38 @@
+{{ define "main" }}
+{{- $paginator := .Paginator -}}
+{{- $all := .Pages -}}
+{{- $total := len $all -}}
+{{- $numbers := dict -}}
+{{- range $i, $p := $all -}}
+  {{- $numbers = merge $numbers (dict $p.RelPermalink (printf "N.º %02d" (sub $total $i))) -}}
+{{- end -}}
+<div class="vf-frame vf-guide-x">
+
+  <header class="vf-list-head">
+    <div class="vf-kicker-row">
+      <span class="vf-kicker">{{ i18n "entriesIn" }}</span>
+      <span class="vf-kicker-row__rule"></span>
+      <span class="vf-kicker">{{ $total }} {{ i18n "posts" | lower }}</span>
+    </div>
+    <h1 class="vf-display vf-display--lg">
+      <span class="vf-tag__hash">#</span>{{ .Title }}
+    </h1>
+    {{- with .Content }}
+    <div class="vf-list-head__lead">{{ . }}</div>
+    {{- end }}
+  </header>
+
+  {{- if $paginator.Pages }}
+  <ul class="vf-index">
+    {{- range $i, $p := $paginator.Pages }}
+    {{- partial "entry-row.html" (dict "page" $p "num" (index $numbers $p.RelPermalink) "delay" (mul $i 40)) }}
+    {{- end }}
+  </ul>
+  {{- partial "pager.html" $paginator }}
+  {{- else }}
+  <p class="vf-empty__text">{{ i18n "noPosts" }}</p>
+  {{- end }}
+
+  <p class="vf-meta"><a href="{{ (printf "%s/" (.Data.Plural)) | relLangURL }}">{{ i18n "allTags" }}&nbsp;→</a></p>
+</div>
+{{ end }}

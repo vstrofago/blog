@@ -1,0 +1,11 @@
+{{- /* Placa de código: cabecera con lenguaje y botón de copiar, cuerpo con el
+       resaltado que produce la configuración del sitio (clases, tema propio). */ -}}
+{{- $highlight := transform.HighlightCodeBlock . -}}
+{{- $lang := .Type | default "text" -}}
+<div class="vf-code">
+  <div class="vf-code__head">
+    <span class="vf-code__lang">{{ $lang }}</span>
+    <button class="vf-code__copy" type="button" data-vf-copy data-vf-copied="{{ i18n "copied" }}">{{ i18n "copyCode" }}</button>
+  </div>
+  {{ $highlight.Wrapped }}
+</div>

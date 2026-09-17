@@ -1,0 +1,63 @@
+{{ define "main" }}
+<article class="vf-frame vf-guide-x">
+  {{- if site.Params.ShowBreadCrumbs }}{{ partial "breadcrumbs.html" . }}{{ end }}
+
+  <header class="vf-post-head">
+    <div class="vf-kicker-row">
+      <span class="vf-kicker">{{ with .Section }}{{ . | upper }}{{ else }}{{ i18n "index" | upper }}{{ end }}</span>
+      <span class="vf-kicker-row__rule"></span>
+    </div>
+    <h1 class="vf-display vf-display--xl vf-post-head__title">{{ .Title }}</h1>
+    <div class="vf-post-head__meta">
+      {{ partial "post-meta.html" (dict "page" .) }}
+      {{- with .GetTerms "tags" }}
+      <ul class="vf-tag-row">
+        {{- range . }}
+        <li><a class="vf-tag" href="{{ .RelPermalink }}"><span class="vf-tag__hash">#</span>{{ .LinkTitle }}</a></li>
+        {{- end }}
+      </ul>
+      {{- end }}
+    </div>
+  </header>
+
+  {{- with .Summary }}
+  <p class="vf-lead">{{ . | plainify }}</p>
+  {{- end }}
+
+  {{ partial "toc.html" . }}
+
+  <div class="vf-prose">{{ .Content }}</div>
+
+  <footer class="vf-post-foot">
+    {{- with .GetTerms "categories" }}
+    <p class="vf-kicker vf-post-foot__label">{{ i18n "categories" }}</p>
+    <ul class="vf-tag-row">
+      {{- range . }}
+      <li><a class="vf-tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- end }}
+
+    {{- if site.Params.ShowPostNavLinks }}
+      {{- $prev := .PrevInSection | default .Prev }}
+      {{- $next := .NextInSection | default .Next }}
+      {{- if or $prev $next }}
+      <nav class="vf-post-nav" aria-label="{{ i18n "prevPost" }} / {{ i18n "nextPost" }}">
+        {{- with $prev }}
+        <a class="vf-post-nav__item" href="{{ .RelPermalink }}" rel="prev">
+          <span class="vf-kicker">←&nbsp;{{ i18n "prevPost" }}</span>
+          <span class="vf-post-nav__title">{{ .Title }}</span>
+        </a>
+        {{- end }}
+        {{- with $next }}
+        <a class="vf-post-nav__item vf-post-nav__item--next" href="{{ .RelPermalink }}" rel="next">
+          <span class="vf-kicker">{{ i18n "nextPost" }}&nbsp;→</span>
+          <span class="vf-post-nav__title">{{ .Title }}</span>
+        </a>
+        {{- end }}
+      </nav>
+      {{- end }}
+    {{- end }}
+  </footer>
+</article>
+{{ end }}

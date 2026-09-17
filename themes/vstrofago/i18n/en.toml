@@ -1,0 +1,125 @@
+[skipToContent]
+other = "Skip to content"
+
+[menu]
+other = "Menu"
+
+[home]
+other = "Home"
+
+[posts]
+other = "Posts"
+
+[index]
+other = "Index"
+
+[featured]
+other = "Featured"
+
+[moreEntries]
+other = "More entries"
+
+[allEntries]
+other = "All entries"
+
+[latest]
+other = "Latest entries"
+
+[readMore]
+other = "Read entry"
+
+[readingTime]
+other = "{{ .Count }} min read"
+
+[words]
+other = "{{ .Count }} words"
+
+[updated]
+other = "Updated"
+
+[toc]
+other = "Contents"
+
+[tags]
+other = "Tags"
+
+[categories]
+other = "Categories"
+
+[prevPost]
+other = "Previous"
+
+[nextPost]
+other = "Next"
+
+[newer]
+other = "Newer"
+
+[older]
+other = "Older"
+
+[page]
+other = "Page {{ .Count }}"
+
+[notFoundTitle]
+other = "Nothing drawn here"
+
+[notFoundText]
+other = "This sheet of the notebook is blank. The page you are looking for does not exist, or it moved."
+
+[backHome]
+other = "Back to the cover"
+
+[themeToggle]
+other = "Switch theme"
+
+[themeLight]
+other = "Light"
+
+[themeDark]
+other = "Dark"
+
+[langSwitch]
+other = "Language"
+
+[copyCode]
+other = "Copy"
+
+[copied]
+other = "Copied"
+
+[search]
+other = "Search"
+
+[searchPlaceholder]
+other = "Type to search the notebook"
+
+[searchNoResults]
+other = "No entries match that query."
+
+[searchResults]
+other = "{{ .Count }} entries"
+
+[searchResultsLabel]
+other = "entries"
+
+[searchLoading]
+other = "Looking…"
+
+[searchNoJs]
+other = "Search runs in your browser, so it needs JavaScript. The raw index is at index.json."
+
+[noPosts]
+other = "No entries yet."
+
+[builtWith]
+other = "Hugo · own theme"
+
+[rss]
+other = "RSS"
+
+[allTags]
+other = "All tags"
+
+[entriesIn]
+other = "Entries in"

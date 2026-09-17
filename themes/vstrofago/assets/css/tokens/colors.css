@@ -1,0 +1,53 @@
+/* VSTROFAGO — color tokens.
+   Light-only: blueprint paper with a single cobalt accent. No dark alias, no semantic
+   status colors (removed per channel decision). */
+
+:root {
+  /* ---- base: paper (light) ---- */
+  --paper-0: #FCFBF8;   /* raised card */
+  --paper-1: #F4F3EE;   /* page background */
+  --paper-2: #ECEAE3;   /* recessed / wells */
+  --paper-3: #E2E0D8;   /* deep wells, hover on wells */
+
+  /* ---- base: ink ---- */
+  --ink-1: #24272E;     /* primary text */
+  --ink-2: #4C5361;     /* secondary text */
+  --ink-3: #7C8391;     /* tertiary / placeholders */
+
+  /* ---- base: cobalt ---- */
+  --blue-050: #EEF2FD;
+  --blue-100: #DCE5FB;
+  --blue-200: #B7C9F6;
+  --blue-400: #4D79F0;
+  --blue-600: #1249D6;  /* primary accent */
+  --blue-700: #0D3BC0;  /* hover / footer field */
+  --blue-800: #0A2E9A;
+
+  /* ---- semantic aliases ---- */
+  --bg:            var(--paper-1);
+  --bg-deep:       var(--paper-3);              /* workspace/backdrop surround & code plates — LIGHT ONLY (no dark mode) */
+  --surface:       var(--paper-0);
+  --well:          var(--paper-2);
+  --text-body:     var(--ink-1);
+  --text-muted:    var(--ink-2);
+  --text-faint:    var(--ink-3);
+  --text-display:  var(--blue-600);
+  --accent:        var(--blue-600);
+  --accent-strong: var(--blue-700);
+  --accent-soft:   var(--blue-050);
+  --accent-border: var(--blue-200);
+  --on-accent:     #FFFFFF;
+  --on-deep:        var(--ink-1);               /* text on --bg-deep plates (light) */
+  --on-deep-muted:  var(--ink-3);               /* muted text on --bg-deep (light) */
+  --on-deep-accent: var(--accent);              /* accent markers on --bg-deep (light) */
+  --border:        #DBD9D0;
+  --border-strong: #C4C2B8;
+  --guide:         #CDD3E4;                     /* dashed layout guides */
+  --grid-line:     rgba(70, 100, 220, 0.10);    /* fine blueprint grid */
+  --grid-line-strong: rgba(70, 100, 220, 0.18);
+  --grid-field:    rgba(84, 110, 224, 0.13);    /* unified square-grid line — tenuous, fine cells */
+  --tick:          #A7B4DC;                     /* corner tick markers */
+  --selection:     rgba(77, 121, 240, 0.22);
+  --scrim:         rgba(36, 39, 46, 0.42);
+  --feature-fill:  var(--blue-700);
+}

@@ -1,0 +1,24 @@
+{{- /* Footer: campo cobalto (chrome del canal, no una placa destacada).
+       Textura de rayado del DS sobre el cobalto para que la superficie respire. */ -}}
+<footer class="vf-field vf-hatch">
+  <div class="vf-frame vf-field__inner">
+    <div class="vf-field__top">
+      <div>
+        <span class="vf-wordmark vf-field__brand">{{ site.Title }}</span>
+        <p class="vf-field__tagline">{{ i18n "index" | title }} · {{ site.Params.description }}</p>
+      </div>
+      <nav class="vf-field__links" aria-label="{{ i18n "menu" }}">
+        {{- range site.Params.socialIcons }}
+        {{- $external := findRE "://" .url }}
+        <a href="{{ if $external }}{{ .url }}{{ else }}{{ .url | relLangURL }}{{ end }}"{{ if $external }} rel="me noopener" target="_blank"{{ end }}>{{ .name }}{{ if $external }}&nbsp;↗{{ end }}</a>
+        {{- end }}
+        <a href="#top">↑&nbsp;{{ i18n "home" }}</a>
+      </nav>
+    </div>
+    <div class="vf-field__bottom">
+      <span class="vf-meta">© {{ now.Year }} {{ site.Title }}</span>
+      <span class="vf-meta">{{ i18n "builtWith" }}</span>
+      {{- if hugo.IsMultilingual }}{{ partial "lang-switch.html" . }}{{ end }}
+    </div>
+  </div>
+</footer>

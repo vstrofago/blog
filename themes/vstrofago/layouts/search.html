@@ -1,0 +1,32 @@
+{{ define "main" }}
+<div class="vf-frame vf-guide-x">
+  <header class="vf-list-head">
+    <div class="vf-kicker-row">
+      <span class="vf-kicker">{{ site.Title }} · {{ i18n "index" }}</span>
+      <span class="vf-kicker-row__rule"></span>
+    </div>
+    <h1 class="vf-display vf-display--lg">{{ .Title }}</h1>
+  </header>
+
+  <div class="vf-plate vf-search" data-vf-search
+    data-vf-index="{{ "index.json" | relLangURL }}"
+    data-vf-label-none="{{ i18n "searchNoResults" }}"
+    data-vf-label-count="{{ i18n "searchResultsLabel" }}">
+    <label class="vf-search__field">
+      <span class="vf-kicker">{{ i18n "search" }}</span>
+      <input class="vf-search__input" type="search" data-vf-search-input
+        placeholder="{{ i18n "searchPlaceholder" }}" autocomplete="off" spellcheck="false" autofocus>
+    </label>
+    <p class="vf-search__status" data-vf-search-status aria-live="polite"></p>
+    <ul class="vf-index vf-search__results" data-vf-search-results></ul>
+    <noscript>
+      <p class="vf-empty__text">{{ i18n "searchNoJs" }}</p>
+    </noscript>
+  </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+{{- $search := resources.Get "js/vf-search.js" | minify | fingerprint -}}
+<script src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}" defer></script>
+{{ end }}

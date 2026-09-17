@@ -1,0 +1,8 @@
+{{- /* Imagen con pie: borde 1px y epígrafe en kicker, como una figura de plano. */ -}}
+{{- $alt := .PlainText | default .Text -}}
+<figure class="vf-figure">
+  <img src="{{ .Destination | safeURL }}" alt="{{ $alt }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
+  {{- with .Title }}
+  <figcaption class="vf-figcaption">{{ . }}</figcaption>
+  {{- end }}
+</figure>

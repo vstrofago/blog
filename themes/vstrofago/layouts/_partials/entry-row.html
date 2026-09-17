@@ -1,0 +1,26 @@
+{{- /* Fila del índice: número de entrada, título, resumen, meta y temas.
+       Cada fila es su propio escenario de motion, con retardo escalonado. */ -}}
+{{- $page := .page -}}
+{{- $num := .num | default "" -}}
+{{- $delay := .delay | default 0 -}}
+<li class="vf-entry vf-stage" style="--vf-delay: {{ $delay }}ms">
+  <div class="vf-entry__num vf-num">{{ $num }}</div>
+  <div class="vf-entry__body vf-rise">
+    <h3 class="vf-display vf-display--sm vf-entry__title">
+      <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+    </h3>
+    {{- with $page.Summary }}
+    <p class="vf-entry__summary">{{ . | plainify | truncate 200 }}</p>
+    {{- end }}
+    <div class="vf-entry__foot">
+      {{ partial "post-meta.html" (dict "page" $page) }}
+      {{- with $page.GetTerms "tags" }}
+      <ul class="vf-tag-row">
+        {{- range . }}
+        <li><a class="vf-tag" href="{{ .RelPermalink }}"><span class="vf-tag__hash">#</span>{{ .LinkTitle }}</a></li>
+        {{- end }}
+      </ul>
+      {{- end }}
+    </div>
+  </div>
+</li>

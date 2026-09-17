@@ -1,0 +1,34 @@
+{{- /* Entrada destacada: la ÚNICA placa con acento por superficie (portada).
+       Tics en L con el contrato de motion del DS. */ -}}
+{{- $page := .page -}}
+{{- $num := .num | default "" -}}
+<article class="vf-plate vf-plate-featured vf-panel-grid vf-ticks vf-stage vf-entry--featured">
+  <span class="vf-tick vf-tick-in tl" aria-hidden="true"></span>
+  <span class="vf-tick vf-tick-in tr" aria-hidden="true"></span>
+  <span class="vf-tick vf-tick-in bl" aria-hidden="true"></span>
+  <span class="vf-tick vf-tick-in br" aria-hidden="true"></span>
+  <div class="vf-rise">
+    <div class="vf-kicker-row">
+      <span class="vf-kicker vf-num">{{ $num }}</span>
+      <span class="vf-kicker">{{ i18n "featured" }}</span>
+      <span class="vf-kicker-row__rule" style="background: var(--tick-on-field)"></span>
+    </div>
+    <h2 class="vf-display vf-display--md vf-entry__title">
+      <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+    </h2>
+    {{- with $page.Summary }}
+    <p class="vf-entry__summary">{{ . | plainify | truncate 220 }}</p>
+    {{- end }}
+    <div class="vf-entry__foot">
+      {{ partial "post-meta.html" (dict "page" $page) }}
+      {{- with $page.GetTerms "tags" }}
+      <ul class="vf-tag-row">
+        {{- range . }}
+        <li><a class="vf-tag" href="{{ .RelPermalink }}"><span class="vf-tag__hash">#</span>{{ .LinkTitle }}</a></li>
+        {{- end }}
+      </ul>
+      {{- end }}
+    </div>
+    <a class="vf-featured__cta" href="{{ $page.RelPermalink }}">{{ i18n "readMore" }}&nbsp;→</a>
+  </div>
+</article>

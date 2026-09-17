@@ -1,0 +1,18 @@
+{{- /* Paginador. Los extremos sin página se renderizan como span deshabilitado,
+       nunca como href="#". */ -}}
+{{- $p := . -}}
+{{- if gt $p.TotalPages 1 }}
+<nav class="vf-pager" aria-label="{{ i18n "page" (dict "Count" $p.PageNumber) }}">
+  {{- if $p.HasPrev }}
+  <a class="vf-pager__link" href="{{ $p.Prev.URL }}" rel="prev">←&nbsp;{{ i18n "newer" }}</a>
+  {{- else }}
+  <span class="vf-disabled">←&nbsp;{{ i18n "newer" }}</span>
+  {{- end }}
+  <span class="vf-pager__status">{{ i18n "page" (dict "Count" $p.PageNumber) }} / {{ $p.TotalPages }}</span>
+  {{- if $p.HasNext }}
+  <a class="vf-pager__link" href="{{ $p.Next.URL }}" rel="next">{{ i18n "older" }}&nbsp;→</a>
+  {{- else }}
+  <span class="vf-disabled">{{ i18n "older" }}&nbsp;→</span>
+  {{- end }}
+</nav>
+{{- end }}

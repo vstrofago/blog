@@ -1,0 +1,29 @@
+/* VSTROFAGO — typography tokens.
+   Two families: Sanchez (slab serif) for display, IBM Plex Mono for everything else.
+   A third brand display font may be slotted into --font-brand later (currently aliased to display). */
+
+:root {
+  --font-display: 'Sanchez', 'Rockwell', 'Roboto Slab', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, monospace;
+  --font-brand: var(--font-display); /* reserved for a future channel display face */
+
+  /* display scale (serif, always --text-display color) */
+  --display-xl: 400 clamp(44px, 5vw, 72px)/1.08 var(--font-display);
+  --display-lg: 400 40px/1.15 var(--font-display);
+  --display-md: 400 28px/1.25 var(--font-display);
+  --display-sm: 400 21px/1.35 var(--font-display);
+
+  /* oversized display for thumbnails / hero video frames */
+  --display-poster: 400 clamp(64px, 8vw, 132px)/1.02 var(--font-display);
+
+  /* mono scale (UI + body) */
+  --body-lg:  400 16px/1.65 var(--font-mono);
+  --body-md:  400 14px/1.6 var(--font-mono);
+  --body-sm:  400 12.5px/1.55 var(--font-mono);
+  --label-md: 500 13px/1.2 var(--font-mono);
+  --label-sm: 500 11px/1.2 var(--font-mono);
+
+  /* letterspaced all-caps kicker / channel chrome */
+  --kicker-tracking: 0.18em;
+  --wordmark-tracking: 0.26em; /* VSTROFAGO wordmark is set wide */
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{{- /* El tema es claro por defecto (invariante del DS). La variante oscura es opt-in
+       explícito: solo si el usuario la eligió antes. Nada de prefers-color-scheme. */ -}}
+<html lang="{{ site.Language.Lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    (function () {
+      try {
+        if (window.localStorage.getItem('vf-theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  {{ partial "head.html" . }}
+</head>
+<body class="vf-body vf-grid vf-paper">
+  <a class="vf-skip" href="#main">{{ i18n "skipToContent" }}</a>
+  <div class="vf-page" id="top">
+    {{ partial "header.html" . }}
+    <main class="vf-main" id="main">
+      {{ block "main" . }}{{ end }}
+    </main>
+    {{ partial "footer.html" . }}
+  </div>
+  {{- $scripts := slice (resources.Get "js/vf-theme.js") (resources.Get "js/vf-motion.js") (resources.Get "js/vf-copy.js") | resources.Concat "js/vf.js" | minify | fingerprint -}}
+  <script src="{{ $scripts.RelPermalink }}" integrity="{{ $scripts.Data.Integrity }}" defer></script>
+  {{ block "scripts" . }}{{ end }}
+</body>
+</html>

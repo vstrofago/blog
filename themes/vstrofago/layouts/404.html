@@ -1,0 +1,16 @@
+{{ define "main" }}
+<div class="vf-frame vf-guide-x">
+  <section class="vf-plate vf-panel-grid vf-ticks vf-stage vf-empty">
+    <span class="vf-tick vf-tick-in tl" aria-hidden="true"></span>
+    <span class="vf-tick vf-tick-in tr" aria-hidden="true"></span>
+    <span class="vf-tick vf-tick-in bl" aria-hidden="true"></span>
+    <span class="vf-tick vf-tick-in br" aria-hidden="true"></span>
+    <div class="vf-rise">
+      <span class="vf-kicker">404 · {{ site.Title }}</span>
+      <h1 class="vf-display vf-display--lg" style="margin-top: var(--sp-4)">{{ i18n "notFoundTitle" }}</h1>
+      <p class="vf-empty__text">{{ i18n "notFoundText" }}</p>
+      <a class="vf-btn vf-btn--primary" href="{{ site.Home.RelPermalink }}">{{ i18n "backHome" }}</a>
+    </div>
+  </section>
+</div>
+{{ end }}

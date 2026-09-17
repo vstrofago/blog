@@ -1,0 +1,32 @@
+{{ define "main" }}
+{{- $terms := .Pages -}}
+<div class="vf-frame vf-guide-x">
+
+  <header class="vf-list-head">
+    <div class="vf-kicker-row">
+      <span class="vf-kicker">{{ .Data.Plural | default (i18n "allTags") }}</span>
+      <span class="vf-kicker-row__rule"></span>
+      <span class="vf-kicker">{{ len $terms }} {{ i18n "tags" | lower }}</span>
+    </div>
+    <h1 class="vf-display vf-display--lg">{{ .Title }}</h1>
+    {{- with .Content }}
+    <div class="vf-list-head__lead">{{ . }}</div>
+    {{- end }}
+  </header>
+
+  {{- if $terms }}
+  <ul class="vf-tag-row vf-tag-cloud">
+    {{- range $terms }}
+    <li>
+      <a class="vf-tag" href="{{ .RelPermalink }}">
+        <span class="vf-tag__hash">#</span>{{ .LinkTitle }}<span class="vf-tag__count">&nbsp;·&nbsp;{{ len .Pages }}</span>
+      </a>
+    </li>
+    {{- end }}
+  </ul>
+  {{- else }}
+  <p class="vf-empty__text">{{ i18n "noPosts" }}</p>
+  {{- end }}
+
+</div>
+{{ end }}

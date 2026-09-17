@@ -1,0 +1,55 @@
+/* VSTROFAGO — base element styles. */
+
+* { box-sizing: border-box; }
+
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text-body);
+  font: var(--body-md);
+}
+
+::selection { background: var(--selection); }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--text-display);
+  margin: 0;
+}
+h1 { font: var(--display-xl); color: var(--text-display); }
+h2 { font: var(--display-lg); color: var(--text-display); }
+h3 { font: var(--display-md); color: var(--text-display); }
+h4 { font: var(--display-sm); color: var(--text-display); }
+
+p { margin: 0; }
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-fast) var(--ease-out);
+}
+a:hover { text-decoration-color: var(--accent); }
+
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* letterspaced all-caps kicker */
+.vf-kicker {
+  font: var(--label-sm);
+  letter-spacing: var(--kicker-tracking);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* VSTROFAGO wordmark — always uppercase, wide-tracked slab */
+.vf-wordmark {
+  font-family: var(--font-brand);
+  text-transform: uppercase;
+  letter-spacing: var(--wordmark-tracking);
+  color: var(--text-display);
+  font-weight: 400;
+}

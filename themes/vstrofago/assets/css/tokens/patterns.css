@@ -1,0 +1,148 @@
+/* VSTROFAGO — blueprint patterns & textures.
+   Utility classes prefixed vf-. Every one reads theme tokens so it works in both modes.
+   Grid/dots/notebook motifs evoke a blueprint, a graph-paper cuaderno, and a cutting mat. */
+
+/* Unified square grid — tenuous single-weight line, fine 16px cells (used everywhere).
+   vf-grid, vf-grid-coarse and vf-cutmat are aliases of the same field; vf-grid-fine is a
+   finer 12px variant of it. */
+.vf-grid,
+.vf-grid-coarse,
+.vf-cutmat {
+  background-image:
+    linear-gradient(var(--grid-field) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-field) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+.vf-grid-fine {
+  background-image:
+    linear-gradient(var(--grid-field) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-field) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+/* Dot grid — notebook / bullet-journal dotted page */
+.vf-dots {
+  background-image: radial-gradient(var(--grid-line-strong) 1.3px, transparent 1.4px);
+  background-size: 24px 24px;
+  background-position: 12px 12px;
+}
+.vf-dots-fine {
+  background-image: radial-gradient(var(--grid-line-strong) 1px, transparent 1.1px);
+  background-size: 16px 16px;
+  background-position: 8px 8px;
+}
+
+/* Paper grain — subtle noise for page backgrounds */
+.vf-paper { position: relative; }
+.vf-paper::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Panel grid — faint grid fading at edges, for tinted plate headers */
+.vf-panel-grid { position: relative; }
+.vf-panel-grid::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(var(--grid-field) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-field) 1px, transparent 1px);
+  background-size: 16px 16px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 60%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 60%, transparent 100%);
+}
+
+/* Diagonal hatching — engineering fill for footers & accents */
+.vf-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--grid-line-strong) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+/* Dashed layout guides — vertical rails at section edges */
+.vf-guide-x { border-left: 1px dashed var(--guide); border-right: 1px dashed var(--guide); }
+.vf-guide-t { border-top: 1px dashed var(--guide); }
+.vf-guide-b { border-bottom: 1px dashed var(--guide); }
+
+/* Open-diamond node markers + solid→dashed rules — optional "remates" (drafting-sheet edge).
+   Distinct from the default L-bracket ticks; use sparingly on frames and dividers. */
+.vf-nodes { position: relative; }
+.vf-node {
+  position: absolute; width: 11px; height: 11px; transform: rotate(45deg);
+  background: var(--bg); border: 1.5px solid var(--tick); z-index: 3; pointer-events: none;
+}
+.vf-node.tl { top: -6px; left: -6px; }
+.vf-node.tr { top: -6px; right: -6px; }
+.vf-node.bl { bottom: -6px; left: -6px; }
+.vf-node.br { bottom: -6px; right: -6px; }
+.vf-node.accent { border-color: var(--accent); }
+
+/* Solid→dashed rule — a divider that starts as a clean line and dashes out ("lineal luego punteado") */
+.vf-rule-split {
+  height: 1px; border: 0;
+  background:
+    linear-gradient(90deg, var(--border-strong), var(--border-strong)) left center / 52% 1px no-repeat,
+    repeating-linear-gradient(90deg, var(--border-strong) 0 4px, transparent 4px 9px) right center / 48% 1px no-repeat;
+}
+.vf-rule-split.v {
+  width: 1px; height: auto; align-self: stretch;
+  background:
+    linear-gradient(180deg, var(--border-strong), var(--border-strong)) center top / 1px 52% no-repeat,
+    repeating-linear-gradient(180deg, var(--border-strong) 0 4px, transparent 4px 9px) center bottom / 1px 48% no-repeat;
+}
+
+/* Corner crop marks — small L brackets at frame corners (no rhombus) */
+.vf-ticks { position: relative; }
+.vf-ticks > .vf-tick {
+  position: absolute; width: 12px; height: 12px;
+  z-index: 2; pointer-events: none;
+}
+.vf-tick.tl { top: -1px; left: -1px; border-top: 1.5px solid var(--tick); border-left: 1.5px solid var(--tick); }
+.vf-tick.tr { top: -1px; right: -1px; border-top: 1.5px solid var(--tick); border-right: 1.5px solid var(--tick); }
+.vf-tick.bl { bottom: -1px; left: -1px; border-bottom: 1.5px solid var(--tick); border-left: 1.5px solid var(--tick); }
+.vf-tick.br { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--tick); border-right: 1.5px solid var(--tick); }
+
+/* Highlighted text — inline mark for quoted/emphasized copy */
+.vf-highlight {
+  background: var(--selection);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.12em;
+}
+
+/* Featured plate — accent fill, soft lifted shadow, pale graph overlay */
+.vf-plate-featured {
+  position: relative;
+  box-shadow:
+    0 16px 32px -12px color-mix(in srgb, var(--feature-fill) 45%, transparent),
+    0 2px 6px color-mix(in srgb, var(--feature-fill) 22%, transparent);
+}
+.vf-plate-featured::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse at center, #000 55%, transparent 100%);
+}
+
+/* Measurement rule — tick strip like a ruler edge */
+.vf-rule {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--guide) 0 1px,
+    transparent 1px 8px
+  );
+  height: 10px;
+}

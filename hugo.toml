@@ -1,11 +1,10 @@
 baseURL = 'https://vstrofago.github.io/blog/'
 title = 'VSTROFAGO'
-theme = 'PaperMod'
+theme = 'vstrofago'
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 enableEmoji = true
-ignoreLogs = ['warning-partial-superfluous-prefix']
 locale = 'en-US'
 
 [pagination]
@@ -55,28 +54,27 @@ locale = 'en-US'
       weight = 20
 
 [params]
-  env = 'production'
   author = 'VSTROFAGO'
-  defaultTheme = 'auto'
+  # Chrome: el tema es claro; la variante oscura del footer/encabezado se activa con
+  # el botón (opt-in). El toggle no usa prefers-color-scheme.
   disableThemeToggle = false
-  displayFullLangName = false
+  # Contenido
+  mainSections = ['posts']
+  homeLimit = 5
   ShowReadingTime = true
   ShowWordCount = true
-  ShowShareButtons = false
-  ShowPostNavLinks = true
+  ShowLastMod = false
   ShowBreadCrumbs = true
-  ShowCodeCopyButtons = true
+  ShowPostNavLinks = true
   ShowRssButtonInSectionTermList = true
-  ShowFullTextinRSS = false
   ShowToc = true
   TocOpen = false
-  mainSections = ['posts']
 
 [[params.socialIcons]]
-  name = 'github'
+  name = 'GitHub'
   url = 'https://github.com/vstrofago'
 [[params.socialIcons]]
-  name = 'rss'
+  name = 'RSS'
   url = 'index.xml'
 
 [markup]
@@ -85,9 +83,12 @@ locale = 'en-US'
       unsafe = true
   [markup.highlight]
     noClasses = false
+    lineNos = false
+    anchorLineNos = false
+    tabWidth = 2
   [markup.tableOfContents]
     startLevel = 2
-    endLevel = 4
+    endLevel = 3
 
 [taxonomies]
   tag = 'tags'

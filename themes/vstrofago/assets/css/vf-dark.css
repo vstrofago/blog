@@ -1,0 +1,82 @@
+/* VSTROFAGO — variante oscura (extensión de canal, opt-in).
+   El DS declara modo claro único; esto NO es un token del DS ni lo modifica: es una
+   reinterpretación de canal, aislada y activada solo por html[data-theme="dark"].
+   Sin JS, sin elección guardada o con JS desactivado el sitio es claro, que es el
+   estado canónico. Ni @media (prefers-color-scheme) ni clase .dark: un único gancho.
+
+   Reglas: se reescriben SOLO los tokens base; ningún componente cambia. Un acento
+   (cobalto, aclarado a --blue-400 por contraste sobre tinta), sombras planas,
+   rejilla cobalto tenue. Sin glows, sin degradados. */
+
+html[data-theme='dark'] {
+  /* ---- base: paper (oscuro) ---- */
+  --paper-0: #16181D; /* tarjeta elevada */
+  --paper-1: #101216; /* fondo de página */
+  --paper-2: #1B1E24; /* pozo / rehundido */
+  --paper-3: #23272F; /* pozo profundo, hover */
+
+  /* ---- base: ink (claro) ---- */
+  --ink-1: #E8E6E0;
+  --ink-2: #B0B5BF;
+  --ink-3: #7C838F;
+
+  /* ---- base: cobalt ---- */
+  --blue-050: #131C33;
+  --blue-100: #1A2647;
+  --blue-200: #2B3C6B;
+  --blue-400: #6E93F5;
+  --blue-600: #4D79F0; /* acento sobre tinta: el cobalto de marca, aclarado un paso */
+  --blue-700: #1249D6; /* campo del footer (cobalto pleno) */
+  --blue-800: #8FAEF8;
+
+  /* ---- alias semánticos ---- */
+  --bg: var(--paper-1);
+  --bg-deep: var(--paper-0); /* placas de código */
+  --surface: var(--paper-0);
+  --well: var(--paper-2);
+  --text-body: var(--ink-1);
+  --text-muted: var(--ink-2);
+  --text-faint: var(--ink-3);
+  --text-display: var(--blue-400);
+  --accent: var(--blue-600);
+  --accent-strong: var(--blue-400);
+  --accent-soft: var(--blue-050);
+  --accent-border: var(--blue-200);
+  --on-accent: #FFFFFF;
+  --on-deep: var(--ink-1);
+  --on-deep-muted: var(--ink-3);
+  --on-deep-accent: var(--accent);
+  --border: #2A2E36;
+  --guide: #2E3646;
+  --grid-line: rgba(110, 147, 245, 0.09);
+  --grid-line-strong: rgba(110, 147, 245, 0.16);
+  --grid-field: rgba(110, 147, 245, 0.11);
+  --tick: #5A6A93;
+  --border: #2A2E36;
+  --border-strong: #4A515E;
+  --selection: rgba(110, 147, 245, 0.26);
+  --scrim: rgba(8, 9, 12, 0.62);
+  --feature-fill: var(--blue-700);
+
+  /* ---- sombras: planas también en tinta ---- */
+  --shadow-plate: 0 0 0 1px var(--border), 0 1px 0 rgba(0, 0, 0, 0.35);
+  --shadow-raised: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-overlay: 0 4px 12px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+/* El grano de papel es tinta oscura: sobre papel oscuro se atenúa. */
+html[data-theme='dark'] .vf-paper::before { opacity: 0.28; }
+
+/* En tinta los chips necesitan relleno y etiqueta más claros: con el borde solo
+   se disolvían en el fondo. El radio sigue siendo near-square (regla del DS: los
+   pills son para sellos, no para temas). */
+html[data-theme='dark'] .vf-tag {
+  background: var(--paper-3);
+  border-color: var(--border-strong);
+  color: var(--accent-strong);
+}
+html[data-theme='dark'] .vf-tag:hover {
+  background: var(--paper-2);
+  border-color: var(--accent-border);
+  color: var(--accent);
+}

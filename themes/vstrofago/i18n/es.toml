@@ -1,0 +1,125 @@
+[skipToContent]
+other = "Ir al contenido"
+
+[menu]
+other = "Menú"
+
+[home]
+other = "Inicio"
+
+[posts]
+other = "Entradas"
+
+[index]
+other = "Índice"
+
+[featured]
+other = "Destacada"
+
+[moreEntries]
+other = "Más entradas"
+
+[allEntries]
+other = "Todas las entradas"
+
+[latest]
+other = "Últimas entradas"
+
+[readMore]
+other = "Leer entrada"
+
+[readingTime]
+other = "{{ .Count }} min de lectura"
+
+[words]
+other = "{{ .Count }} palabras"
+
+[updated]
+other = "Actualizado"
+
+[toc]
+other = "Contenido"
+
+[tags]
+other = "Temas"
+
+[categories]
+other = "Categorías"
+
+[prevPost]
+other = "Anterior"
+
+[nextPost]
+other = "Siguiente"
+
+[newer]
+other = "Más reciente"
+
+[older]
+other = "Más antigua"
+
+[page]
+other = "Página {{ .Count }}"
+
+[notFoundTitle]
+other = "Aquí no hay nada dibujado"
+
+[notFoundText]
+other = "Esta hoja del cuaderno está en blanco. La página que buscas no existe, o se movió."
+
+[backHome]
+other = "Volver a la portada"
+
+[themeToggle]
+other = "Cambiar tema"
+
+[themeLight]
+other = "Claro"
+
+[themeDark]
+other = "Oscuro"
+
+[langSwitch]
+other = "Idioma"
+
+[copyCode]
+other = "Copiar"
+
+[copied]
+other = "Copiado"
+
+[search]
+other = "Buscar"
+
+[searchPlaceholder]
+other = "Escribe para buscar en el cuaderno"
+
+[searchNoResults]
+other = "Ninguna entrada coincide con esa búsqueda."
+
+[searchResults]
+other = "{{ .Count }} entradas"
+
+[searchResultsLabel]
+other = "entradas"
+
+[searchLoading]
+other = "Buscando…"
+
+[searchNoJs]
+other = "La búsqueda corre en tu navegador, así que necesita JavaScript. El índice crudo está en index.json."
+
+[noPosts]
+other = "Todavía no hay entradas."
+
+[builtWith]
+other = "Hugo · tema propio"
+
+[rss]
+other = "RSS"
+
+[allTags]
+other = "Todos los temas"
+
+[entriesIn]
+other = "Entradas de"

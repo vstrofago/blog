@@ -1,0 +1,152 @@
+/* VSTROFAGO — blueprint motion.
+   Philosophy: no fades. Things are DRAWN, TYPED, WIPED, UNDERLINED into being — like a
+   plan taking shape on a drafting table. Quick, dry, mechanical easing.
+
+   Contract (print- & reduced-motion-safe):
+     • Default (no JS): every animated element sits in its FINAL, visible state.
+     • JS arms a container with `.is-armed`  → children snap to their pre-state (hidden/undrawn).
+     • JS then adds `.is-playing`            → children animate from pre-state to final.
+   So static exports, PDF, and prefers-reduced-motion all show finished content.
+
+   Stagger any element with inline `style="--vf-delay: 240ms"`.
+*/
+
+/* ---------- 1. Typewriter (single line, mono) ---------- */
+.vf-type {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: bottom;
+  max-width: 100%;
+}
+.vf-stage.is-armed .vf-type { width: 0; border-right: 0.08em solid var(--accent); }
+.vf-stage.is-armed.is-playing .vf-type {
+  animation:
+    vf-typing var(--dur-type) steps(var(--vf-steps, 22)) var(--vf-delay, 0ms) forwards,
+    vf-caret 640ms step-end infinite;
+}
+@keyframes vf-typing { from { width: 0; } to { width: 100%; } }
+@keyframes vf-caret { 0%, 100% { border-right-color: var(--accent); } 50% { border-right-color: transparent; } }
+
+/* ---------- 2. Draw stroke (SVG lines/paths "planos formándose") ---------- */
+/* Give the element/path style="--vf-len: <pathLength>" and pathLength="<same>" for exactness. */
+.vf-draw { stroke-dasharray: var(--vf-len, 1200); stroke-dashoffset: 0; }
+.vf-stage.is-armed .vf-draw { stroke-dashoffset: var(--vf-len, 1200); }
+.vf-stage.is-armed.is-playing .vf-draw {
+  animation: vf-draw var(--dur-draw) var(--ease-draw) var(--vf-delay, 0ms) forwards;
+}
+@keyframes vf-draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- 3. Underline / highlight sweep ---------- */
+.vf-underline { position: relative; }
+.vf-underline::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -0.06em;
+  height: 0.14em; background: var(--accent); transform-origin: left center; transform: scaleX(1);
+}
+.vf-stage.is-armed .vf-underline::after { transform: scaleX(0); }
+.vf-stage.is-armed.is-playing .vf-underline::after {
+  animation: vf-scale-x var(--dur-draw) var(--ease-draw) var(--vf-delay, 0ms) forwards;
+}
+/* highlighter block sweeping behind text */
+.vf-mark { position: relative; display: inline; }
+.vf-mark::before {
+  content: ""; position: absolute; left: -0.12em; right: -0.12em; top: 0.05em; bottom: 0.02em;
+  background: var(--selection); z-index: -1; transform-origin: left center; transform: scaleX(1);
+}
+.vf-stage.is-armed .vf-mark::before { transform: scaleX(0); }
+.vf-stage.is-armed.is-playing .vf-mark::before {
+  animation: vf-scale-x var(--dur-med) var(--ease-out) var(--vf-delay, 0ms) forwards;
+}
+@keyframes vf-scale-x { to { transform: scaleX(1); } }
+
+/* ---------- 4. Grid / plane wipe ("planos formándose", grid drawing in) ---------- */
+.vf-wipe-r { clip-path: inset(0 0 0 0); }
+.vf-stage.is-armed .vf-wipe-r { clip-path: inset(0 100% 0 0); }
+.vf-stage.is-armed.is-playing .vf-wipe-r { animation: vf-wipe-r var(--dur-draw) var(--ease-draw) var(--vf-delay, 0ms) forwards; }
+@keyframes vf-wipe-r { to { clip-path: inset(0 0 0 0); } }
+
+.vf-wipe-d { clip-path: inset(0 0 0 0); }
+.vf-stage.is-armed .vf-wipe-d { clip-path: inset(0 0 100% 0); }
+.vf-stage.is-armed.is-playing .vf-wipe-d { animation: vf-wipe-d var(--dur-draw) var(--ease-draw) var(--vf-delay, 0ms) forwards; }
+@keyframes vf-wipe-d { to { clip-path: inset(0 0 0 0); } }
+
+.vf-wipe-u { clip-path: inset(0 0 0 0); }
+.vf-stage.is-armed .vf-wipe-u { clip-path: inset(100% 0 0 0); }
+.vf-stage.is-armed.is-playing .vf-wipe-u { animation: vf-wipe-u var(--dur-draw) var(--ease-draw) var(--vf-delay, 0ms) forwards; }
+@keyframes vf-wipe-u { to { clip-path: inset(0 0 0 0); } }
+
+/* ---------- 5. Corner ticks growing out ---------- */
+.vf-tick-in { transform: scale(1); }
+.vf-stage.is-armed .vf-ticks .vf-tick-in,
+.vf-stage.is-armed .vf-tick.vf-tick-in { transform: scale(0.05); }
+.vf-tick-in.tl { transform-origin: top left; }
+.vf-tick-in.tr { transform-origin: top right; }
+.vf-tick-in.bl { transform-origin: bottom left; }
+.vf-tick-in.br { transform-origin: bottom right; }
+.vf-stage.is-armed.is-playing .vf-tick-in {
+  animation: vf-tick-grow var(--dur-med) var(--ease-out) var(--vf-delay, 0ms) forwards;
+}
+@keyframes vf-tick-grow { to { transform: scale(1); } }
+
+/* ---------- 6. Rise (structural slide-in via clip, not opacity) ---------- */
+.vf-rise { transform: translateY(0); }
+.vf-stage.is-armed .vf-rise { transform: translateY(0.6em); clip-path: inset(0 0 100% 0); }
+.vf-stage.is-armed.is-playing .vf-rise { animation: vf-rise var(--dur-med) var(--ease-out) var(--vf-delay, 0ms) forwards; }
+@keyframes vf-rise { to { transform: translateY(0); clip-path: inset(0 0 -10% 0); } }
+
+/* ---------- 7. Stamp (scale-slam settle — rubber-stamp entrance) ---------- */
+.vf-stamp { display: inline-block; transform: scale(1); }
+.vf-stage.is-armed .vf-stamp { transform: scale(1.4); }
+.vf-stage.is-armed.is-playing .vf-stamp {
+  animation: vf-stamp var(--dur-med) var(--ease-out) var(--vf-delay, 0ms) forwards;
+}
+@keyframes vf-stamp { 0% { transform: scale(1.4); } 60% { transform: scale(0.96); } 100% { transform: scale(1); } }
+
+/* ---------- 8. Pop (dot / node scaling in — for plotting dots & nodes) ---------- */
+.vf-pop { transform: scale(1); }
+.vf-stage.is-armed .vf-pop { transform: scale(0.05); }
+.vf-stage.is-armed.is-playing .vf-pop {
+  animation: vf-tick-grow var(--dur-med) var(--ease-out) var(--vf-delay, 0ms) forwards;
+}
+
+/* ---------- 9. Scanline (plotter head sweeping the reveal edge) ---------- */
+.vf-scanline {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 2px;
+  background: var(--accent); pointer-events: none; opacity: 0;
+  box-shadow: 0 0 0.5px var(--accent);
+}
+.vf-stage.is-armed .vf-scanline { left: 0; opacity: 1; }
+.vf-stage.is-armed.is-playing .vf-scanline {
+  animation: vf-scan var(--dur-draw) var(--ease-draw) var(--vf-delay, 0ms) forwards;
+}
+@keyframes vf-scan { 0% { left: 0; opacity: 1; } 90% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+
+/* ---------- 10. Sweep highlight (a light bar wiping once across a plate) ---------- */
+.vf-sweep { position: relative; overflow: hidden; }
+.vf-sweep::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 40%;
+  left: -50%; pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 18%, transparent), transparent);
+  opacity: 0;
+}
+.vf-stage.is-armed.is-playing .vf-sweep::after {
+  animation: vf-sweep 900ms var(--ease-out) var(--vf-delay, 0ms) forwards;
+}
+@keyframes vf-sweep { 0% { left: -50%; opacity: 1; } 100% { left: 120%; opacity: 0; } }
+
+/* ---------- reduced motion / print: everything final, instantly ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .vf-stage.is-armed .vf-scanline { opacity: 0; }
+  .vf-stage.is-armed .vf-type { width: 100%; border-right: 0; }
+  .vf-stage.is-armed .vf-draw { stroke-dashoffset: 0; }
+  .vf-stage.is-armed .vf-underline::after,
+  .vf-stage.is-armed .vf-mark::before { transform: scaleX(1); }
+  .vf-stage.is-armed .vf-wipe-r,
+  .vf-stage.is-armed .vf-wipe-d,
+  .vf-stage.is-armed .vf-wipe-u { clip-path: inset(0 0 0 0); }
+  .vf-stage.is-armed .vf-tick-in { transform: scale(1); }
+  .vf-stage.is-armed .vf-rise { transform: none; clip-path: none; }
+  .vf-stage.is-armed .vf-stamp,
+  .vf-stage.is-armed .vf-pop { transform: none; }
+  .vf-stage.is-armed.is-playing * { animation: none !important; }
+}
