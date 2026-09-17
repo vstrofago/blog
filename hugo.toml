@@ -23,7 +23,7 @@ locale = 'en-US'
       DateFormat = 'January 2, 2006'
       [languages.en.params.homeInfoParams]
         Title = 'Hi, welcome to VSTROFAGO'
-        Content = 'Notes, projects and experiments. This site is bilingual: English and Spanish.'
+        Content = 'Things that pass through my mind: I write when something keeps going round in my head.'
     [[languages.en.menu.main]]
       name = 'Posts'
       url = 'posts/'
@@ -44,7 +44,7 @@ locale = 'en-US'
       DateFormat = '2006-01-02'
       [languages.es.params.homeInfoParams]
         Title = 'Hola, bienvenido a VSTROFAGO'
-        Content = 'Notas, proyectos y experimentos. Este sitio es bilingüe: inglés y español.'
+        Content = 'Cosas que pasan por mi mente: escribo cuando algo me da vueltas.'
     [[languages.es.menu.main]]
       name = 'Entradas'
       url = 'posts/'

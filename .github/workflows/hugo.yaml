@@ -3,6 +3,10 @@ name: Deploy Hugo site to Pages
 on:
   push:
     branches: ["main"]
+  # PRs get the build validated (no deploy), so an external pull request is
+  # checked before it can ever reach main.
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 # Least privilege: nothing is granted globally; each job asks for what it needs.
@@ -62,6 +66,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    # Never deploy from a pull request: only pushes to main publish the site.
+    if: github.event_name == 'push'
     permissions:
       pages: write
       id-token: write
