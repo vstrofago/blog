@@ -7,14 +7,17 @@
      NODE_PATH=/home/user/.hermes/hermes-agent/node_modules node docs/superpowers/verify-theme.cjs
    `--buildDrafts` es necesario: la placa de código se prueba contra
    content/en/probe-code.md, que va como `draft: true` para no publicarse nunca.
-   Capturas en /tmp/vf-shots. Sale con código 1 si alguna comprobación falla.
+   Contra lo publicado:
+     VF_BASE=https://vstrofago.github.io/blog/ node docs/superpowers/verify-theme.cjs
+   (el fixture no está en producción, así que esa comprobación se omite sola).
+   Capturas en /tmp/vf-shots (VF_SHOTS para cambiarlo). Sale con código 1 si algo falla.
    Ojo: el navegador remoto de Hermes no alcanza localhost; por eso se usa Playwright
    local en vez de la herramienta de navegador. */
 const { chromium } = require('playwright');
 const fs = require('fs');
 
-const BASE = 'http://localhost:1313/blog/';
-const SHOTS = '/tmp/vf-shots';
+const BASE = process.env.VF_BASE || 'http://localhost:1313/blog/';
+const SHOTS = process.env.VF_SHOTS || '/tmp/vf-shots';
 
 const results = [];
 const record = (name, pass, detail) => results.push({ name, pass: !!pass, detail });
@@ -35,13 +38,19 @@ const contrast = (a, b) => {
 (async () => {
   fs.mkdirSync(SHOTS, { recursive: true });
   const browser = await chromium.launch();
-  const errors = [];
 
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 1000 } });
   const page = await ctx.newPage();
+  const errors = [];
+  const httpFails = [];
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (m) => {
-    if (m.type() === 'error') errors.push('console: ' + m.text());
+    // "Failed to load resource" se juzga por URL abajo, no por el texto del log.
+    if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text());
+  });
+  page.on('response', (r) => {
+    // El fixture probe-code no se publica: su 404 es esperado y no cuenta.
+    if (r.status() >= 400 && !/probe-code/.test(r.url())) httpFails.push(`${r.status()} ${r.url()}`);
   });
 
   const styles = () =>
@@ -276,7 +285,12 @@ const contrast = (a, b) => {
     await page.evaluate(() => localStorage.removeItem('vf-theme'));
   }
 
-  record('sin errores de consola', errors.length === 0, errors.slice(0, 3).join(' | '));
+  record('sin errores de JS', errors.length === 0, errors.slice(0, 3).join(' | '));
+  record(
+    'sin recursos faltantes (>=400)',
+    httpFails.length === 0,
+    [...new Set(httpFails)].slice(0, 3).join(' | ')
+  );
 
   // ---------- 9. ¿Qué fuente se renderiza de verdad?
   await page.evaluate(() => localStorage.removeItem('vf-theme'));
