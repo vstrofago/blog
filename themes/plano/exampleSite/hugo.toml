@@ -1,28 +1,32 @@
-baseURL = 'https://vstrofago.github.io/blog/'
-title = 'VSTROFAGO'
+# Example site for the Plano Hugo theme.
+# The theme is this repository: the CI (and any local test) assembles a site in a
+# temporary directory, copies the repo as themes/plano and drops this exampleSite
+# on top of it. See .github/workflows/build.yaml and README.md.
+baseURL = 'https://example.org/'
+title = 'Plano'
 theme = 'plano'
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
-enableRobotsTXT = true
 enableEmoji = true
+enableRobotsTXT = true
 locale = 'en-US'
 
 [pagination]
-  pagerSize = 10
+  pagerSize = 5
 
 [languages]
   [languages.en]
     label = 'English'
     locale = 'en-US'
     contentDir = 'content/en'
-    title = 'VSTROFAGO'
+    title = 'Plano'
     weight = 1
     [languages.en.params]
-      description = 'Notes, projects and experiments.'
+      description = 'Example site for the Plano theme.'
       DateFormat = 'January 2, 2006'
       [languages.en.params.homeInfoParams]
-        Title = 'Hi, welcome to VSTROFAGO'
-        Content = 'Things that pass through my mind: I write when something keeps going round in my head.'
+        Title = 'Plano'
+        Content = 'A blueprint-flavored Hugo theme: warm paper, cobalt grid and one single accent color.'
     [[languages.en.menu.main]]
       name = 'Posts'
       url = 'posts/'
@@ -31,19 +35,23 @@ locale = 'en-US'
       name = 'About'
       url = 'about/'
       weight = 20
+    [[languages.en.menu.main]]
+      name = 'Search'
+      url = 'search/'
+      weight = 30
 
   [languages.es]
     label = 'Español'
     locale = 'es-ES'
     contentDir = 'content/es'
-    title = 'VSTROFAGO'
+    title = 'Plano'
     weight = 2
     [languages.es.params]
-      description = 'Notas, proyectos y experimentos.'
+      description = 'Sitio de ejemplo del tema Plano.'
       DateFormat = '2006-01-02'
       [languages.es.params.homeInfoParams]
-        Title = 'Hola, bienvenido a VSTROFAGO'
-        Content = 'Cosas que pasan por mi mente: escribo cuando algo me da vueltas.'
+        Title = 'Plano'
+        Content = 'Un tema de Hugo con aire de plano: papel cálido, rejilla cobalto y un único acento.'
     [[languages.es.menu.main]]
       name = 'Entradas'
       url = 'posts/'
@@ -52,15 +60,18 @@ locale = 'en-US'
       name = 'Acerca'
       url = 'about/'
       weight = 20
+    [[languages.es.menu.main]]
+      name = 'Buscar'
+      url = 'search/'
+      weight = 30
 
 [params]
-  author = 'VSTROFAGO'
-  # Chrome: el tema es claro; la variante oscura del footer/encabezado se activa con
-  # el botón (opt-in). El toggle no usa prefers-color-scheme.
+  author = 'Example Author'
+  # The theme is light; the dark variant is opt-in through the header toggle.
+  # Set to true to remove the toggle and stay light always.
   disableThemeToggle = false
-  # Contenido
   mainSections = ['posts']
-  homeLimit = 5
+  homeLimit = 4
   ShowReadingTime = true
   ShowWordCount = true
   ShowLastMod = false
@@ -94,5 +105,6 @@ locale = 'en-US'
   tag = 'tags'
   category = 'categories'
 
+# The JSON output feeds the client-side search (see assets/js/vf-search.js).
 [outputs]
   home = ['HTML', 'RSS', 'JSON']

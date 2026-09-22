@@ -1,0 +1,82 @@
+name: Build example site
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Least privilege: nothing is granted globally; the job asks for what it needs.
+permissions: {}
+
+concurrency:
+  group: "build"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      HUGO_VERSION: 0.166.0
+      # sha256 of hugo_extended_0.166.0_linux-amd64.deb, from the release's
+      # hugo_0.166.0_checksums.txt. Update this together with HUGO_VERSION.
+      HUGO_SHA256: 52b06555f739b1a08e04f5c31296e9bdf166a012e9b7e3137befc889dbc24db8
+    steps:
+      - name: Install Hugo CLI (checksum verified)
+        run: |
+          set -euo pipefail
+          wget -O "${RUNNER_TEMP}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          echo "${HUGO_SHA256}  ${RUNNER_TEMP}/hugo.deb" | sha256sum -c -
+          sudo dpkg -i "${RUNNER_TEMP}/hugo.deb"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # A theme that loses its own identity files is broken in a way a build will
+      # not notice, because Hugo falls back silently.
+      - name: Check the theme is complete
+        run: |
+          set -euo pipefail
+          for f in theme.toml LICENSE README.md layouts/baseof.html \
+                   assets/css/vf-site.css assets/css/vf-dark.css \
+                   assets/js/vf-theme.js i18n/en.toml static/fonts/OFL.txt; do
+            test -e "$f" || { echo "::error::falta $f"; exit 1; }
+          done
+          grep -q 'name = "Plano"' theme.toml || { echo "::error::theme.toml no declara el nombre"; exit 1; }
+
+      - name: Build the example site
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          HUGO_ENVIRONMENT: production
+          TZ: America/Chicago
+        run: |
+          set -euo pipefail
+          site="${RUNNER_TEMP}/site"
+          mkdir -p "${site}/themes"
+          rsync -a --exclude .git --exclude exampleSite ./ "${site}/themes/plano/"
+          rsync -a ./exampleSite/ "${site}/"
+          # --panicOnWarning: un aviso de Hugo es un fallo aquí.
+          hugo --source "${site}" --gc --minify --panicOnWarning --baseURL https://example.org/
+
+      - name: Check the built site
+        run: |
+          set -euo pipefail
+          pub="${RUNNER_TEMP}/site/public"
+          for f in index.html es/index.html index.json es/index.json 404.html \
+                   sitemap.xml index.xml tags/index.html posts/index.html; do
+            test -f "${pub}/$f" || { echo "::error::falta $f en el sitio construido"; exit 1; }
+          done
+          test "$(ls "${pub}"/css/vf.min.*.css | wc -l)" -eq 1 || { echo "::error::se esperaba un único bundle CSS"; exit 1; }
+          grep -q 'data-theme' "${pub}/css/"vf.min.*.css || { echo "::error::el bundle CSS no incluye la variante oscura"; exit 1; }
+          echo "sitio de ejemplo correcto"

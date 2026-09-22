@@ -1,0 +1,13 @@
+name = "Plano"
+license = "MIT"
+licenselink = "https://github.com/vstrofago/hugo-theme-plano/blob/main/LICENSE"
+description = "A blueprint-flavored Hugo theme: warm paper, cobalt grid, one single accent color and an optional dark variant."
+homepage = "https://github.com/vstrofago/hugo-theme-plano"
+demosite = "https://vstrofago.github.io/blog/"
+tags = ["blog", "blueprint", "light", "multilingual", "monospace", "i18n", "responsive"]
+features = ["blog", "multilingual", "taxonomies", "table-of-contents", "client-side-search", "rss", "syntax-highlighting", "dark-mode-opt-in", "self-hosted-fonts", "no-build-step"]
+min_version = "0.146.0"
+
+[author]
+  name = "VSTROFAGO"
+  homepage = "https://github.com/vstrofago"

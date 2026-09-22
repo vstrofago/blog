@@ -17,7 +17,7 @@
 .chroma .cp,
 .chroma .cpf,
 .chroma .cd {
-  color: var(--text-faint);
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -100,9 +100,11 @@
 .chroma .w {
   color: var(--text-body);
 }
+/* Puntuación y espacios: un paso de tinta por encima del tenue. Sobre la placa
+   (paper-3 en claro) el tenue daba 2.88:1, por debajo de AA para texto pequeño. */
 .chroma .p,
 .chroma .w {
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
 
 /* Genéricos (diff, headings, prompts). */
@@ -118,9 +120,9 @@
   text-decoration: line-through;
 }
 .chroma .gi { color: var(--accent-strong); }
-.chroma .gt { color: var(--text-faint); }
+.chroma .gt { color: var(--text-muted); }
 .chroma .gr { color: var(--accent-strong); }
-.chroma .gp { color: var(--text-faint); }
+.chroma .gp { color: var(--text-muted); }
 
 /* Error: mismo acento, subrayado ondulado (nada de rojo semántico). */
 .chroma .err {
@@ -131,7 +133,7 @@
 /* Números de línea y líneas resaltadas. */
 .chroma .lnt,
 .chroma .ln {
-  color: var(--text-faint);
+  color: var(--text-muted);
   padding-right: var(--sp-4);
   user-select: none;
 }

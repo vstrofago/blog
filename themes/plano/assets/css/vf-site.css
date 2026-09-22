@@ -247,7 +247,7 @@ html[data-theme='dark'] .vf-toggle__sun { display: inline-flex; }
   text-decoration: none;
 }
 .vf-tag__hash { color: var(--text-faint); }
-.vf-tag__count { color: var(--text-faint); }
+.vf-tag__count { color: var(--text-muted); }
 
 .vf-tag-row {
   display: flex;
@@ -400,7 +400,9 @@ html[data-theme='dark'] .vf-toggle__sun { display: inline-flex; }
   font: var(--label-sm);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-faint);
+  /* El tramo final es el título de la página actual: es contenido, no adorno.
+     Con el tenue daba 3.43:1 sobre el papel claro. */
+  color: var(--text-muted);
   margin-bottom: var(--sp-6);
 }
 .vf-crumbs ol {
