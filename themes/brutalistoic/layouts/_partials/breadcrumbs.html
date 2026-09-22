@@ -1,0 +1,14 @@
+{{- /* Miga de pan: inicio → ancestros → página actual. El último tramo no es enlace. */ -}}
+{{- if site.Params.ShowBreadCrumbs }}
+<nav class="vf-crumbs bl-caption" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="{{ site.Home.RelPermalink }}">{{ i18n "home" }}</a></li>
+    {{- range .Ancestors.Reverse }}
+    {{- if not .IsHome }}
+    <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+    {{- end }}
+    {{- end }}
+    <li><span aria-current="page">{{ .LinkTitle }}</span></li>
+  </ol>
+</nav>
+{{- end }}

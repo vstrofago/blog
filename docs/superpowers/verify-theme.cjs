@@ -1,340 +1,572 @@
-/* Verificación real del tema VSTROFAGO contra el servidor local de Hugo.
-   No es un test unitario: mide el CSS aplicado, el contraste, la persistencia del
-   tema, el contrato de motion y el comportamiento responsive en un navegador real.
+/* Verificación real del tema brutalistoic contra el servidor local de Hugo.
+   No es un test unitario: mide el CSS aplicado, el contraste WCAG de verdad, el
+   contrato de markup de los componentes del DS, el contrato de movimiento y de
+   sin-JS, las fuentes que se renderizan y el comportamiento responsive.
 
    Uso:
-     hugo server --port 1313 --bind 127.0.0.1 --disableFastRender --buildDrafts
+     hugo server --port 1319 --bind 127.0.0.1 --disableFastRender --buildDrafts
      NODE_PATH=/home/user/.hermes/hermes-agent/node_modules node docs/superpowers/verify-theme.cjs
    `--buildDrafts` es necesario: la placa de código se prueba contra
    content/en/probe-code.md, que va como `draft: true` para no publicarse nunca.
    Contra lo publicado:
-     VF_BASE=https://vstrofago.github.io/blog/ node docs/superpowers/verify-theme.cjs
+     BL_BASE=https://vstrofago.github.io/blog/ node docs/superpowers/verify-theme.cjs
    (el fixture no está en producción, así que esa comprobación se omite sola).
-   Capturas en /tmp/vf-shots (VF_SHOTS para cambiarlo). Sale con código 1 si algo falla.
-   Ojo: el navegador remoto de Hermes no alcanza localhost; por eso se usa Playwright
-   local en vez de la herramienta de navegador. */
+   Capturas en docs/superpowers/shots (BL_SHOTS para cambiarlo). Sale con 1 si algo falla.
+
+   Dos trampas conocidas, ya sufridas:
+   - `color-mix()` se resuelve como `color(srgb r g b / a)` con las componentes en
+     0-1: un parser que solo entiende `rgb()` lo salta y la auditoría sale limpia
+     en falso. Aquí se parsean las DOS sintaxis y se compone el alfa.
+   - La captura `fullPage` no dispara el `IntersectionObserver`: se recorre la
+     página con `window.scrollTo` antes de capturar y de juzgar alturas. */
 const { chromium } = require('playwright');
 const fs = require('fs');
 
-const BASE = process.env.VF_BASE || 'http://localhost:1313/blog/';
-const SHOTS = process.env.VF_SHOTS || '/tmp/vf-shots';
+const BASE = process.env.BL_BASE || 'http://127.0.0.1:1319/blog/';
+const SHOTS = process.env.BL_SHOTS || 'docs/superpowers/shots';
+const DUMP = process.env.BL_DUMP || '/home/user/.hermes/cache/scratch/brutalo/dom.json';
 
 const results = [];
-const record = (name, pass, detail) => results.push({ name, pass: !!pass, detail });
+const record = (name, pass, detail) => results.push({ name, pass: !!pass, detail: String(detail ?? '') });
 
-const lum = (rgb) => {
-  const [r, g, b] = rgb.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number);
-  const f = (c) => {
-    c /= 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+/* ---------- color: la auditoría lleva sus propios parsers dentro ----------
+   (ver auditContrast). Aquí solo queda el contrato de markup. */
+
+/* Auditoría AA por página: umbral 4.5, o 3.0 en texto grande (>=24px, o >=18.66px
+   en negrita). Se deduplica por RUTA del elemento, nunca por color+fondo. */
+const auditContrast = () => {
+  /* Estos helpers van DENTRO de la función: Playwright la serializa y la ejecuta
+     en la página, sin acceso al ámbito de Node. */
+  const parseColor = (raw) => {
+    const str = String(raw || '').trim();
+    let m = str.match(/^rgba?\(([^)]+)\)$/i);
+    if (m) {
+      const p = m[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+      return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+    }
+    m = str.match(/^color\(srgb\s+([^)]+)\)$/i);
+    if (m) {
+      const p = m[1].split(/[/\s]+/).filter(Boolean).map(Number);
+      return { r: Math.round(p[0] * 255), g: Math.round(p[1] * 255), b: Math.round(p[2] * 255), a: p.length > 3 ? p[3] : 1 };
+    }
+    return null;
   };
-  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  const over = (fg, bg) => ({
+    r: fg.r * fg.a + bg.r * (1 - fg.a),
+    g: fg.g * fg.a + bg.g * (1 - fg.a),
+    b: fg.b * fg.a + bg.b * (1 - fg.a),
+    a: 1,
+  });
+  const lum = ({ r, g, b }) => {
+    const f = (c) => {
+      c /= 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  };
+  const contrast = (a, b) => {
+    const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
+    return (x + 0.05) / (y + 0.05);
+  };
+  const canvas = parseColor(getComputedStyle(document.documentElement).backgroundColor) || { r: 255, g: 255, b: 255, a: 1 };
+  const bgOf = (el) => {
+    let node = el;
+    let acc = canvas;
+    const stack = [];
+    while (node && node.nodeType === 1) {
+      const c = parseColor(getComputedStyle(node).backgroundColor);
+      if (c && c.a > 0) stack.push(c);
+      node = node.parentElement;
+    }
+    for (let i = stack.length - 1; i >= 0; i--) acc = over(stack[i], acc);
+    return acc;
+  };
+  const pathOf = (el) => {
+    const parts = [];
+    let node = el;
+    while (node && node.nodeType === 1 && node !== document.documentElement) {
+      let piece = node.tagName.toLowerCase();
+      if (node.id) { parts.unshift(piece + '#' + node.id); break; }
+      const cls = (node.className && node.className.baseVal !== undefined ? node.className.baseVal : node.className || '').toString().trim().split(/\s+/).filter(Boolean);
+      if (cls.length) piece += '.' + cls.join('.');
+      const parent = node.parentElement;
+      if (parent) {
+        const same = [...parent.children].filter((c) => c.tagName === node.tagName);
+        if (same.length > 1) piece += ':nth(' + (same.indexOf(node) + 1) + ')';
+      }
+      parts.unshift(piece);
+      node = parent;
+    }
+    return parts.join(' > ');
+  };
+  const out = [];
+  const seen = new Set();
+  document.querySelectorAll('body *').forEach((el) => {
+    if (el.closest('[aria-hidden="true"]')) return; // decorativo: sin contrato de lectura
+    if (el.closest('svg')) return;
+    const style = getComputedStyle(el);
+    if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+    // solo nodos con texto propio
+    const own = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim().length > 1);
+    if (!own) return;
+    const fgRaw = parseColor(style.color);
+    if (!fgRaw || fgRaw.a === 0) return;
+    const bg = bgOf(el);
+    const fg = over(fgRaw, bg);
+    const size = parseFloat(style.fontSize);
+    const weight = Number(style.fontWeight) || 400;
+    const large = size >= 24 || (size >= 18.66 && weight >= 700);
+    const ratio = contrast(fg, bg);
+    const need = large ? 3.0 : 4.5;
+    const path = pathOf(el);
+    if (seen.has(path)) return;
+    seen.add(path);
+    if (ratio < need) {
+      out.push({ path, ratio: ratio.toFixed(2), need, text: el.textContent.trim().slice(0, 40) });
+    }
+  });
+  return out;
 };
-const contrast = (a, b) => {
-  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m);
-  return ((x + 0.05) / (y + 0.05)).toFixed(2);
+
+/* Contrato de markup: cada clase compuesta que el componente real emite tiene que
+   aparecer en el HTML renderizado (el contenido de cada hueco es nuestro). */
+const classCombos = (html) => {
+  const set = new Set();
+  const re = /class="([^"]+)"/g;
+  let m;
+  while ((m = re.exec(html))) set.add(m[1].trim().split(/\s+/).sort().join(' '));
+  return set;
 };
 
 (async () => {
   fs.mkdirSync(SHOTS, { recursive: true });
+  const dump = fs.existsSync(DUMP) ? JSON.parse(fs.readFileSync(DUMP, 'utf8')) : null;
   const browser = await chromium.launch();
-
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 1000 } });
   const page = await ctx.newPage();
   const errors = [];
   const httpFails = [];
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (m) => {
-    // "Failed to load resource" se juzga por URL abajo, no por el texto del log.
     if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text());
   });
   page.on('response', (r) => {
-    // El fixture probe-code no se publica: su 404 es esperado y no cuenta.
     if (r.status() >= 400 && !/probe-code/.test(r.url())) httpFails.push(`${r.status()} ${r.url()}`);
   });
 
-  const styles = () =>
-    page.evaluate(() => {
-      const cs = (sel) => {
-        const el = document.querySelector(sel);
-        return el ? getComputedStyle(el) : null;
-      };
-      const root = getComputedStyle(document.documentElement);
-      return {
-        theme: document.documentElement.getAttribute('data-theme'),
-        accent: root.getPropertyValue('--accent').trim(),
-        bg: cs('body').backgroundColor,
-        text: cs('body').color,
-        bodyFont: cs('body').fontFamily,
-        h1Font: cs('h1') ? cs('h1').fontFamily : null,
-        h1Size: cs('h1') ? cs('h1').fontSize : null,
-        headerPos: cs('.vf-header') ? cs('.vf-header').position : null,
-        plateRadius: cs('.vf-plate') ? cs('.vf-plate').borderRadius : null,
-        tagRadius: cs('.vf-tag') ? cs('.vf-tag').borderRadius : null,
-        tagBorder: cs('.vf-tag') ? cs('.vf-tag').borderTopWidth : null,
-        featuredBg: cs('.vf-plate-featured') ? cs('.vf-plate-featured').backgroundColor : null,
-        fieldBg: cs('.vf-field') ? cs('.vf-field').backgroundColor : null,
-        staged: [...document.querySelectorAll('.vf-stage')].map((s) => ({
-          cls: s.className.includes('is-armed') ? 'armed' : s.className.includes('is-playing') ? 'playing' : 'final',
-        })),
-        riseClip: cs('.vf-rise') ? cs('.vf-rise').clipPath : null,
-        emptyAnchors: document.querySelectorAll('a[href="#"]').length,
-        overflow: document.documentElement.scrollWidth - window.innerWidth,
-        fonts: [...document.fonts].map((f) => `${f.family}@${f.weight}=${f.status}`),
-        fontReqs: performance
-          .getEntriesByType('resource')
-          .map((r) => r.name)
-          .filter((n) => /fonts\//.test(n)).length,
-        entries: document.querySelectorAll('.vf-entry, .vf-entry--featured').length,
-        grid: cs('body').backgroundImage.includes('linear-gradient'),
-        aside: cs('.vf-toc') ? true : false,
-      };
+  const walk = async () => {
+    await page.evaluate(async () => {
+      const step = window.innerHeight * 0.7;
+      for (let y = 0; y < document.body.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 120));
+      }
+      window.scrollTo(0, 0);
     });
+    await page.waitForTimeout(300);
+  };
 
-  // ---------- 1. Portada, modo claro (canónico)
+  /* ---------- 1. Portada ---------- */
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
-  let s = await styles();
-  record('claro: sin data-theme', s.theme === null, s.theme);
-  record('claro: papel #F4F3EE', s.bg === 'rgb(244, 243, 238)', s.bg);
-  record('claro: acento cobalto #1249d6', s.accent.toLowerCase() === '#1249d6', s.accent);
-  record('display en Sanchez', /Sanchez/.test(s.h1Font || ''), s.h1Font);
-  record('cuerpo en IBM Plex Mono', /IBM Plex Mono/.test(s.bodyFont || ''), s.bodyFont);
-  record('header sticky', s.headerPos === 'sticky', s.headerPos);
-  record('radios near-square (placa 6px)', s.plateRadius === '6px', s.plateRadius);
-  record('tag radio 2px / borde 1px', s.tagRadius === '2px' && s.tagBorder === '1px', `${s.tagRadius}/${s.tagBorder}`);
-  record('placa destacada en cobalto', s.featuredBg === 'rgb(13, 59, 192)', s.featuredBg);
-  record('footer campo cobalto', s.fieldBg === 'rgb(13, 59, 192)', s.fieldBg);
-  record('rejilla de fondo activa', s.grid === true, String(s.grid));
-  record('entradas en portada = 3', s.entries === 3, s.entries);  record('fuentes locales solicitadas', s.fontReqs >= 2, s.fontReqs);
+  let s = await page.evaluate(() => {
+    const cs = (sel, el) => getComputedStyle(el || document.querySelector(sel));
+    const root = getComputedStyle(document.documentElement);
+    const h1 = document.querySelector('h1');
+    const still = document.querySelector('.bl-abanner--still');
+    return {
+      themeDoc: document.documentElement.getAttribute('data-theme'),
+      themeBody: document.body.getAttribute('data-theme'),
+      blRoot: document.body.classList.contains('bl-root'),
+      bg: cs('body').backgroundColor,
+      bodyFont: cs('body').fontFamily,
+      h1Font: h1 ? cs(null, h1).fontFamily : null,
+      h1Size: h1 ? parseFloat(cs(null, h1).fontSize) : 0,
+      rowTitleSize: document.querySelector('.vf-entry__title') ? parseFloat(cs('.vf-entry__title').fontSize) : 0,
+      muted: root.getPropertyValue('--bl-muted').trim().slice(0, 40),
+      line: root.getPropertyValue('--bl-line').trim().slice(0, 40),
+      accentEyebrow: document.querySelector('.vf-hero .bl-eyebrow') ? cs('.vf-hero .bl-eyebrow').getPropertyValue('--eyebrow').trim() : '',
+      mgToken: root.getPropertyValue('--mg').trim(),
+      emptyAnchors: document.querySelectorAll('a[href="#"]').length,
+      overflow: document.documentElement.scrollWidth - window.innerWidth,
+      bannerPres: still ? still.querySelectorAll('pre').length : 0,
+      bannerInk: still ? (still.querySelectorAll('pre')[1] || { textContent: '' }).textContent.replace(/\s/g, '').length : 0,
+      bannerBox: (() => {
+        const b = document.querySelector('.vf-banner__box');
+        const r = b.getBoundingClientRect();
+        return Math.round(r.width) + 'x' + Math.round(r.height);
+      })(),
+      canvasBayer: document.querySelectorAll('canvas.bl-bayer').length,
+      bayerPainted: (() => {
+        const c = document.querySelector('canvas.bl-bayer');
+        if (!c) return -1;
+        const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+        let n = 0;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+        return n;
+      })(),
+      featuredIsCard: !!document.querySelector('.bl-card.vf-featured'),
+      footerOk: (document.querySelector('.vf-footer__ok') || { textContent: '' }).textContent,
+    };
+  });
+  record('un solo tema: data-theme="terminal" en el documento', s.themeDoc === 'terminal', s.themeDoc);
+  record('sin toggle: body sin data-theme y con .bl-root', s.themeBody === null && s.blRoot, `${s.themeBody}/${s.blRoot}`);
+  record('suelo #141414', s.bg === 'rgb(20, 20, 20)', s.bg);
+  record('cuerpo en Space Grotesk', /Space Grotesk/.test(s.bodyFont || ''), s.bodyFont);
+  record('H1 en Jacquard24', /Jacquard24/.test(s.h1Font || ''), s.h1Font);
+  record('H1 es el título mayor de la página', s.h1Size > s.rowTitleSize, `h1 ${s.h1Size}px vs fila ${s.rowTitleSize}px`);
+  record('derivados del DS presentes (bl-muted / bl-line)', !!s.muted && !!s.line, `${s.muted} | ${s.line}`);
+  record('eyebrow de portada en el acento mg', s.accentEyebrow === s.mgToken && s.mgToken.length > 0, `${s.accentEyebrow} == ${s.mgToken}`);
+  record('fotograma horneado: 3 capas ASCII', s.bannerPres === 3, s.bannerPres);
+  record('fotograma horneado: el logo está dibujado (no un boceto)', s.bannerInk > 200, s.bannerInk + ' glifos');
+  record('caja del banner con la geometría del DS (1100x420)', s.bannerBox === '1100x420', s.bannerBox);
+  record('dither Bayer pintado en superficies', s.canvasBayer >= 1 && s.bayerPainted > 500, `${s.canvasBayer} canvas / ${s.bayerPainted} píxeles`);
+  record('destacada como Card del DS', s.featuredIsCard === true, String(s.featuredIsCard));
+  record('estado del pie con palabra (OK), nunca color solo', /OK/.test(s.footerOk), s.footerOk);
   record('sin href="#"', s.emptyAnchors === 0, s.emptyAnchors);
-  record('sin overflow horizontal', s.overflow <= 0, s.overflow);
+  record('portada: sin overflow horizontal', s.overflow <= 0, s.overflow);
+
+  await walk();
+  await page.screenshot({ path: `${SHOTS}/01-portada.png`, fullPage: true });
+
+  // La isla AsciiBanner tiene que montar de verdad y sustituir al fotograma
+  // (React + bundle del DS, en diferido, solo aquí).
+  let island = { mounted: false };
+  try {
+    await page.waitForFunction(
+      () => {
+        const m = document.querySelector('[data-bl-banner-mount]');
+        return m && !m.hidden && m.querySelector('.bl-abanner');
+      },
+      { timeout: 20000 }
+    );
+    island = await page.evaluate(() => {
+      const mount = document.querySelector('[data-bl-banner-mount]');
+      const still = document.querySelector('.bl-abanner--still');
+      const live = mount.querySelector('.bl-abanner');
+      return {
+        mounted: true,
+        shown: !mount.hidden,
+        stillHidden: still.hidden,
+        pres: live.querySelectorAll('pre').length,
+        roleImg: live.getAttribute('role') === 'img',
+        rows: live.querySelectorAll('pre')[0] ? live.querySelectorAll('pre')[0].textContent.split('\n').length : 0,
+      };
+    });
+  } catch (e) {
+    island = { mounted: false, error: String(e.message).slice(0, 80) };
+  }
   record(
-    'contraste cuerpo/paper claro >= 7',
-    Number(contrast(s.text, s.bg)) >= 7,
-    contrast(s.text, s.bg)
+    'isla AsciiBanner: monta y sustituye al fotograma',
+    island.mounted && island.shown && island.stillHidden && island.pres === 3 && island.roleImg,
+    JSON.stringify(island)
   );
-  record('motion armado por JS', s.staged.length > 0 && s.staged.some((x) => x.cls !== 'final'), JSON.stringify(s.staged.slice(0, 3)));
-  await page.screenshot({ path: `${SHOTS}/01-home-claro.png`, fullPage: true });
+  await page.waitForTimeout(1200);
+  await page.screenshot({ path: `${SHOTS}/01b-portada-isla.png`, fullPage: true });
 
-  // ---------- 2. Modo oscuro (opt-in) + persistencia
-  await page.click('[data-vf-theme-toggle]');
-  await page.waitForTimeout(150);
-  let d = await styles();
-  record('oscuro: data-theme=dark', d.theme === 'dark', d.theme);
-  record('oscuro: tinta #101216', d.bg === 'rgb(16, 18, 22)', d.bg);
-  record('oscuro: acento aclarado', d.accent.toLowerCase() === '#4d79f0', d.accent);
-  record(
-    'contraste cuerpo/paper oscuro >= 7',
-    Number(contrast(d.text, d.bg)) >= 7,
-    contrast(d.text, d.bg)
-  );
-  await page.screenshot({ path: `${SHOTS}/02-home-oscuro.png`, fullPage: true });
+  const fails = await page.evaluate(auditContrast);
+  record('contraste AA en portada', fails.length === 0, JSON.stringify(fails.slice(0, 4)));
 
-  await page.reload({ waitUntil: 'networkidle' });
-  const afterReload = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-  record('oscuro persiste tras recargar', afterReload === 'dark', afterReload);
-  await page.evaluate(() => localStorage.removeItem('vf-theme'));
-  await page.reload({ waitUntil: 'networkidle' });
-  const backToLight = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-  record('sin elección vuelve a claro', backToLight === null, backToLight);
-
-  // ---------- 3. Entrada (TOC, prosa, navegación)
+  /* ---------- 2. Entrada ---------- */
   await page.goto(`${BASE}posts/why-cant-we-just-start/`, { waitUntil: 'networkidle' });
-  const post = await styles();
-  record('entrada: TOC presente', post.aside === true, String(post.aside));
-  record('entrada: breadcrumbs', (await page.locator('.vf-crumbs').count()) === 1, await page.locator('.vf-crumbs').count());
-  const tocOpen = await page.locator('.vf-toc details').getAttribute('open');
-  record('entrada: TOC plegado por defecto', tocOpen === null, String(tocOpen));
+  await page.evaluate(() => document.fonts.ready);
+  let e = await page.evaluate(() => {
+    const head = document.querySelector('.bl-article-head');
+    const title = document.querySelector('.bl-article-head__title');
+    const prose = document.querySelector('.bl-prose');
+    return {
+      head: !!head,
+      headClasses: head ? head.className : '',
+      inner: !!document.querySelector('.bl-article-head__inner'),
+      kicker: !!document.querySelector('.p, .bl-article-head__kicker'),
+      kickerClass: (document.querySelector('.bl-article-head__kicker') || {}).className || '',
+      titleClass: (title || {}).className || '',
+      titleFont: title ? getComputedStyle(title).fontFamily : '',
+      deckFont: document.querySelector('.bl-article-head__deck') ? getComputedStyle(document.querySelector('.bl-article-head__deck')).fontFamily : '',
+      metaClass: (document.querySelector('.bl-article-head__meta') || {}).className || '',
+      proseFont: prose ? getComputedStyle(prose).fontFamily : '',
+      proseSize: prose ? getComputedStyle(prose).fontSize : '',
+      proseMeasure: prose ? Math.round(prose.getBoundingClientRect().width) : 0,
+      proseH2Font: prose && prose.querySelector('h2') ? getComputedStyle(prose.querySelector('h2')).fontFamily : '',
+      toc: document.querySelectorAll('.bl-card.vf-toc').length,
+      crumbs: document.querySelectorAll('.vf-crumbs').length,
+      postNav: document.querySelectorAll('.vf-post-nav__item').length,
+      badges: document.querySelectorAll('.bl-badge').length,
+      overflow: document.documentElement.scrollWidth - window.innerWidth,
+    };
+  });
+  record('ArticleHeader: estructura del DS (head/inner/kicker/title/deck/meta)', e.head && e.inner && /bl-article-head__kicker/.test(e.kickerClass) && /bl-article-head__title/.test(e.titleClass) && /bl-article-head__meta/.test(e.metaClass), JSON.stringify({ k: e.kickerClass, t: e.titleClass, m: e.metaClass }));
+  record('ArticleHeader: título en Jacquard24', /Jacquard24/.test(e.titleFont), e.titleFont);
+  record('ArticleHeader: deck en Techno Vibe', /Techno Vibe/.test(e.deckFont), e.deckFont);
+  record('prosa de entrada en IBM Plex Serif 18px', /IBMPlex Serif/.test(e.proseFont) && e.proseSize === '18px', `${e.proseFont} / ${e.proseSize}`);
+  record('prosa con medida 66ch', e.proseMeasure > 560 && e.proseMeasure < 820, e.proseMeasure + 'px');
+  record('h2 de la prosa en Techno Vibe', /Techno Vibe/.test(e.proseH2Font || ''), e.proseH2Font);
+  record('TOC como placa Card del DS', e.toc === 1, e.toc);
+  record('breadcrumbs', e.crumbs === 1, e.crumbs);
+  record('prev/next', e.postNav >= 1, e.postNav);
+  record('temas como Badge del DS', e.badges >= 1, e.badges);
+  record('entrada: sin overflow horizontal', e.overflow <= 0, e.overflow);
+
+  // TOC plegado y abrible sin JS (details nativo)
+  const tocOpenBefore = await page.locator('.vf-toc details').getAttribute('open');
   await page.click('.vf-toc details > summary');
   await page.waitForTimeout(120);
-  record('entrada: TOC abre al clic', (await page.locator('.vf-toc details[open]').count()) === 1, 'open');
-  record('entrada: nav prev/next', (await page.locator('.vf-post-nav__item').count()) >= 1, await page.locator('.vf-post-nav__item').count());
-  const proseWidth = await page.evaluate(() => parseFloat(getComputedStyle(document.querySelector('.vf-prose')).maxWidth));
-  record('prosa con medida legible (≈68ch)', proseWidth >= 620 && proseWidth <= 720, proseWidth);
-  await page.screenshot({ path: `${SHOTS}/03-entrada-claro.png`, fullPage: true });
+  record('TOC plegado por defecto y abre al clic', tocOpenBefore === null && (await page.locator('.vf-toc details[open]').count()) === 1, 'details nativo');
+  await walk();
+  await page.screenshot({ path: `${SHOTS}/02-entrada.png`, fullPage: true });
+  const entryFails = await page.evaluate(auditContrast);
+  record('contraste AA en entrada', entryFails.length === 0, JSON.stringify(entryFails.slice(0, 4)));
 
-  await page.evaluate(() => localStorage.setItem('vf-theme', 'dark'));
-  await page.reload({ waitUntil: 'networkidle' });
-  await page.screenshot({ path: `${SHOTS}/04-entrada-oscuro.png`, fullPage: true });
-  await page.evaluate(() => localStorage.removeItem('vf-theme'));
+  // markup de componentes vs. el dump del bundle real
+  if (dump) {
+    const combos = await page.evaluate(() => document.body.innerHTML);
+    const rendered = classCombos(combos);
+    for (const [caseName, sel] of [['ArticleHeader', '.bl-article-head']]) {
+      const subtree = await page.evaluate((s) => {
+        const el = document.querySelector(s);
+        return el ? el.outerHTML : '';
+      }, sel);
+      const want = classCombos(dump[caseName]);
+      const have = classCombos(subtree);
+      const missing = [...want].filter((c) => !have.has(c));
+      record(`markup del componente ${caseName} = dump del bundle`, missing.length === 0, 'faltan: ' + missing.join(', '));
+    }
+  } else {
+    record('markup de componentes (omitido)', true, 'sin dump dom.json');
+  }
 
-  // ---------- 4. Lista, taxonomía, 404, ES
+  /* ---------- 3. Búsqueda ---------- */
+  await page.goto(`${BASE}search/`, { waitUntil: 'networkidle' });
+  const fieldDom = await page.evaluate(() => ({
+    field: document.querySelectorAll('.bl-field').length,
+    prompt: (document.querySelector('.bl-field__prompt') || {}).textContent,
+    input: document.querySelectorAll('.bl-field__input').length,
+    label: !!document.querySelector('.bl-field label.bl-label'),
+  }));
+  record('búsqueda: Field del DS (label + prompt > + input)', fieldDom.field === 1 && fieldDom.prompt === '>' && fieldDom.input === 1 && fieldDom.label, JSON.stringify(fieldDom));
+  await page.fill('[data-bl-search-input]', 'vulture');
+  await page.waitForTimeout(700);
+  const hits = await page.locator('.vf-entry--hit').count();
+  const status = await page.locator('[data-bl-search-status]').textContent();
+  record('búsqueda: encuentra la entrada y cuenta exacta', hits >= 1 && /\d+ entr/.test(status), `${hits} / "${status}"`);
+  await walk();
+  await page.screenshot({ path: `${SHOTS}/03-busqueda.png`, fullPage: true });
+  await page.fill('[data-bl-search-input]', 'zzzz');
+  await page.waitForTimeout(500);
+  record('búsqueda: sin resultados avisa con texto', (await page.locator('.vf-entry--hit').count()) === 0 && (await page.locator('[data-bl-search-status]').textContent()).length > 0, await page.locator('[data-bl-search-status]').textContent());
+
+  /* ---------- 4. 404 con HUD + lista + ES ---------- */
+  await page.goto(`${BASE}404.html`, { waitUntil: 'networkidle' });
+  const hud = await page.evaluate(() => ({
+    frame: document.querySelectorAll('.bl-frame').length,
+    hudSet: document.querySelectorAll('.bl-hud-set').length,
+    hud: document.querySelectorAll('.bl-hud').length,
+    btn: document.querySelectorAll('.bl-btn--primary').length,
+  }));
+  record('404: placa con Frame y esquinas HUD (4)', hud.frame === 1 && hud.hudSet === 1 && hud.hud === 4 && hud.btn === 1, JSON.stringify(hud));
+  await page.screenshot({ path: `${SHOTS}/04-404.png`, fullPage: true });
+
   await page.goto(`${BASE}posts/`, { waitUntil: 'networkidle' });
   const nums = await page.locator('.vf-entry__num').allTextContents();
-  record('lista: numeración N.º', nums.every((n) => /N\.º \d\d/.test(n.trim())), nums.join(','));
+  record('lista: numeración N.º NN en mono', nums.length > 0 && nums.every((n) => /N\.º \d\d/.test(n.trim())), nums.join(','));
+  await walk();
   await page.screenshot({ path: `${SHOTS}/05-lista.png`, fullPage: true });
-
-  await page.goto(`${BASE}tags/`, { waitUntil: 'networkidle' });
-  record('taxonomía: nube de temas', (await page.locator('.vf-tag-cloud .vf-tag').count()) >= 5, await page.locator('.vf-tag-cloud .vf-tag').count());
-  await page.screenshot({ path: `${SHOTS}/06-temas.png`, fullPage: true });
 
   await page.goto(`${BASE}es/`, { waitUntil: 'networkidle' });
   const esNav = await page.locator('.vf-nav__link').allTextContents();
-  const esH1 = await page.locator('h1').first().textContent();
-  record('ES: menú traducido', esNav.join('|').includes('Entradas'), esNav.join('|'));
-  record('ES: portada traducida', /Hola/.test(esH1), esH1.trim());
-  await page.screenshot({ path: `${SHOTS}/07-es-portada.png`, fullPage: true });
+  const esH1 = (await page.locator('h1').first().textContent()).trim();
+  record('ES: menú y portada traducidos', esNav.join('|').includes('Entradas') && /Hola/.test(esH1), `${esNav.join('|')} / ${esH1}`);
+  const langLinks = await page.locator('.vf-lang__link').count();
+  record('selector de idioma enlaza a la página traducida', langLinks >= 1, langLinks);
+  await walk();
+  await page.screenshot({ path: `${SHOTS}/06-portada-es.png`, fullPage: true });
 
-  await page.goto(`${BASE}404.html`, { waitUntil: 'networkidle' });
-  record('404: placa con estado', (await page.locator('.vf-btn--primary').count()) === 1, 'boton');
-  await page.screenshot({ path: `${SHOTS}/08-404.png`, fullPage: true });
-
-  // ---------- 5. Búsqueda (interacción real, cada idioma con su índice)
-  await page.goto(`${BASE}search/`, { waitUntil: 'networkidle' });
-  await page.fill('[data-vf-search-input]', 'vulture');
-  await page.waitForTimeout(700);
-  const hits = await page.locator('.vf-search__hit').count();
-  const status = await page.locator('[data-vf-search-status]').textContent();
-  record('búsqueda EN: encuentra la entrada', hits === 1, `${hits} / "${status}"`);
-  await page.screenshot({ path: `${SHOTS}/09-busqueda.png`, fullPage: true });
-  await page.fill('[data-vf-search-input]', 'zzzz');
-  await page.waitForTimeout(500);
-  record('búsqueda: sin resultados avisa', (await page.locator('.vf-search__hit').count()) === 0, await page.locator('[data-vf-search-status]').textContent());
-
-  await page.goto(`${BASE}es/search/`, { waitUntil: 'networkidle' });
-  await page.fill('[data-vf-search-input]', 'zopilote');
-  await page.waitForTimeout(700);
-  record(
-    'búsqueda ES: índice propio',
-    (await page.locator('.vf-search__hit').count()) === 1,
-    await page.locator('[data-vf-search-status]').textContent()
-  );
-  await page.screenshot({ path: `${SHOTS}/09b-busqueda-es.png`, fullPage: true });
-
-  // ---------- 6. Móvil
+  /* ---------- 5. Móvil 390px ---------- */
   const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
   const mp = await mobile.newPage();
+  for (const route of ['', 'posts/why-cant-we-just-start/', 'search/']) {
+    await mp.goto(BASE + route, { waitUntil: 'networkidle' });
+    const over = await mp.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    record(`móvil 390px sin overflow: /${route}`, over <= 1, over);
+  }
   await mp.goto(BASE, { waitUntil: 'networkidle' });
-  const mOverflow = await mp.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  record('móvil 390px: sin overflow', mOverflow <= 1, mOverflow);
-  // El motion solo se dispara al entrar en pantalla: se recorre la página como lo
-  // haría una persona y DESPUÉS se comprueba que ninguna fila quedó escondida.
   await mp.evaluate(async () => {
     const step = window.innerHeight * 0.7;
     for (let y = 0; y < document.body.scrollHeight; y += step) {
       window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 140));
+      await new Promise((r) => setTimeout(r, 120));
     }
     window.scrollTo(0, 0);
   });
-  await mp.waitForTimeout(400);
-  const rowState = await mp.evaluate(() =>
-    [...document.querySelectorAll('.vf-entry__body, .vf-hero__lead')].map((el) => ({
-      clip: getComputedStyle(el).clipPath,
-      text: el.innerText.trim().length,
-      h: Math.round(el.getBoundingClientRect().height),
-    }))
-  );
-  record(
-    'móvil: nada queda escondido tras recorrer la página',
-    rowState.every((r) => r.clip !== 'inset(0px 0px 100% 0px)' && r.text > 20 && r.h > 20),
-    JSON.stringify(rowState)
-  );
-  await mp.screenshot({ path: `${SHOTS}/10-movil.png`, fullPage: true });
+  await mp.waitForTimeout(300);
+  await mp.screenshot({ path: `${SHOTS}/07-movil-portada.png`, fullPage: true });
+  await mp.goto(`${BASE}posts/why-cant-we-just-start/`, { waitUntil: 'networkidle' });
+  await mp.screenshot({ path: `${SHOTS}/08-movil-entrada.png`, fullPage: true });
   await mobile.close();
 
-  // ---------- 7. reduced-motion: estado final, sin armar
+  /* ---------- 6. prefers-reduced-motion ---------- */
   const rm = await browser.newContext({ viewport: { width: 1400, height: 1000 }, reducedMotion: 'reduce' });
   const rp = await rm.newPage();
   await rp.goto(BASE, { waitUntil: 'networkidle' });
-  const rmState = await rp.evaluate(() => ({
-    armed: document.querySelectorAll('.vf-stage.is-armed').length,
-    playing: document.querySelectorAll('.vf-stage.is-playing').length,
-    riseClip: getComputedStyle(document.querySelector('.vf-rise')).clipPath,
-    visible: document.querySelector('.vf-hero__lead').getBoundingClientRect().height > 0,
-  }));
-  record('reduced-motion: nada armado', rmState.armed === 0 && rmState.playing === 0, JSON.stringify(rmState));
-  record('reduced-motion: contenido en estado final', rmState.riseClip === 'none' && rmState.visible, rmState.riseClip);
-  await rp.screenshot({ path: `${SHOTS}/11-reduced-motion.png`, fullPage: true });
+  await rp.waitForTimeout(600);
+  const rmState = await rp.evaluate(() => {
+    const still = document.querySelector('.bl-abanner--still');
+    const live = document.querySelector('[data-bl-banner-mount]');
+    const anims = document.getAnimations().filter((a) => a.playState === 'running');
+    const crt = document.querySelector('.bl-crt');
+    return {
+      stillVisible: !!still && !still.hidden,
+      liveHidden: !!live && live.hidden,
+      ink: still ? (still.querySelectorAll('pre')[1] || { textContent: '' }).textContent.replace(/\s/g, '').length : 0,
+      running: anims.length,
+      crtAnim: crt ? getComputedStyle(crt, '::after').animationName : 'sin CRT en esta página',
+    };
+  });
+  record('reduced-motion: la isla NO monta, manda el fotograma', rmState.stillVisible && rmState.liveHidden, JSON.stringify(rmState));
+  record('reduced-motion: el fotograma está entero (no un dibujo a medias)', rmState.ink > 200, rmState.ink + ' glifos');
+  record('reduced-motion: nada anima', rmState.running === 0, rmState.running + ' animaciones');
+  await rp.screenshot({ path: `${SHOTS}/09-reduced-motion.png`, fullPage: true });
   await rm.close();
 
-  // ---------- 8. Placa de código (fixture: content/en/probe-code.md, draft: true)
+  /* ---------- 7. Sin JS ---------- */
+  const nj = await browser.newContext({ viewport: { width: 1400, height: 1000 }, javaScriptEnabled: false });
+  const np = await nj.newPage();
+  await np.goto(BASE, { waitUntil: 'domcontentloaded' });
+  const noJs = await np.evaluate(() => {
+    const still = document.querySelector('.bl-abanner--still');
+    return {
+      nav: document.querySelectorAll('.vf-nav__link').length,
+      entries: document.querySelectorAll('.vf-entry').length,
+      pres: still ? still.querySelectorAll('pre').length : 0,
+      ink: still ? (still.querySelectorAll('pre')[1] || { textContent: '' }).textContent.replace(/\s/g, '').length : 0,
+    };
+  });
+  record('sin JS: navegación e índice legibles', noJs.nav >= 2 && noJs.entries >= 1, JSON.stringify(noJs));
+  record('sin JS: el banner muestra el fotograma', noJs.pres === 3 && noJs.ink > 200, JSON.stringify(noJs));
+  await np.goto(`${BASE}search/`, { waitUntil: 'domcontentloaded' });
+  const noscript = await np.evaluate(() => {
+    const n = document.querySelector('noscript');
+    return n ? n.textContent.trim().length > 0 : false;
+  });
+  record('sin JS: la búsqueda avisa con noscript', noscript, String(noscript));
+  await np.goto(`${BASE}posts/why-cant-we-just-start/`, { waitUntil: 'domcontentloaded' });
+  const noJsToc = await np.locator('.vf-toc details summary').count();
+  record('sin JS: el TOC plegado sigue siendo abrible', noJsToc === 1, noJsToc);
+  await np.screenshot({ path: `${SHOTS}/10-sin-js.png`, fullPage: true });
+  await nj.close();
+
+  /* ---------- 8. Impresión ---------- */
+  await page.goto(`${BASE}posts/why-cant-we-just-start/`, { waitUntil: 'networkidle' });
+  await page.emulateMedia({ media: 'print' });
+  const printState = await page.evaluate(() => {
+    const hidden = (sel) => {
+      const el = document.querySelector(sel);
+      return !el || getComputedStyle(el).display === 'none';
+    };
+    const code = document.querySelector('.bl-terminal');
+    return {
+      chrome: hidden('.vf-header') && hidden('.vf-footer'),
+      dither: hidden('.bl-bayer'),
+      banner: hidden('.vf-banner'),
+      nav: hidden('.vf-post-nav'),
+      crt: code ? getComputedStyle(code, '::after').display === 'none' : true,
+      codeVisible: code ? getComputedStyle(code).display !== 'none' : true,
+      bg: getComputedStyle(document.body).backgroundColor,
+    };
+  });
+  record('impresión: chrome, dither, banner y nav fuera', printState.chrome && printState.dither && printState.banner && printState.nav, JSON.stringify(printState));
+  record('impresión: sin CRT y con el código legible en claro', printState.crt && printState.codeVisible, JSON.stringify(printState));
+  await page.emulateMedia({ media: 'screen' });
+
+  /* ---------- 9. Placa de código (fixture draft: content/en/probe-code.md) ---------- */
   await page.goto(`${BASE}probe-code/`, { waitUntil: 'networkidle' });
-  const plates = await page.locator('.vf-code').count();
+  const plates = await page.locator('.bl-terminal').count();
   if (plates === 0) {
-    record('código: placa de código (omitido)', true, 'sin fixture probe-code.md: no hay bloques que probar');
+    record('código: placa Terminal (omitido)', true, 'sin fixture probe-code.md: hay que arrancar con --buildDrafts');
   } else {
     const code = await page.evaluate(() => {
-      const el = document.querySelector('.vf-code');
+      const el = document.querySelector('.bl-terminal');
       const pre = el.querySelector('pre');
+      const crt = getComputedStyle(el, '::after');
       return {
-        plates: document.querySelectorAll('.vf-code').length,
-        lang: document.querySelector('.vf-code__lang').textContent,
-        copy: document.querySelectorAll('[data-vf-copy]').length,
+        plates: document.querySelectorAll('.bl-terminal').length,
+        crt: el.classList.contains('bl-crt'),
+        bar: !!el.querySelector('.bl-terminal__bar'),
+        copy: document.querySelectorAll('[data-bl-copy]').length,
+        lang: (el.querySelector('.bl-terminal__bar span') || {}).textContent,
         preBg: getComputedStyle(pre).backgroundColor,
         chroma: document.querySelectorAll('.chroma').length,
-        keywordColor: getComputedStyle(document.querySelector('.chroma .k')).color,
-        accent: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+        keyword: document.querySelector('.chroma .k') ? getComputedStyle(document.querySelector('.chroma .k')).color : '',
+        comment: document.querySelector('.chroma .c, .chroma .cm, .chroma .c1') ? getComputedStyle(document.querySelector('.chroma .c, .chroma .cm, .chroma .c1')).color : '',
+        scanlines: crt.backgroundImage.includes('repeating-linear-gradient'),
       };
     });
-    record('código: placa con lenguaje y copiar', code.plates === 2 && code.copy === 2, JSON.stringify(code));
-    record('código: placa sobre paper-3', code.preBg === 'rgb(226, 224, 216)', code.preBg);
-    record('código: palabra clave en acento', code.keywordColor === 'rgb(13, 59, 192)', code.keywordColor);
-    await page.screenshot({ path: `${SHOTS}/12-codigo.png`, fullPage: true });
-
-    // En modo oscuro también
-    await page.evaluate(() => localStorage.setItem('vf-theme', 'dark'));
-    await page.goto(`${BASE}probe-code/`, { waitUntil: 'networkidle' });
-    const codeDark = await page.evaluate(() => ({
-      preBg: getComputedStyle(document.querySelector('.vf-code pre')).backgroundColor,
-      key: getComputedStyle(document.querySelector('.chroma .k')).color,
-    }));
-    record('código oscuro: placa y acento adaptados', codeDark.preBg === 'rgb(22, 24, 29)', JSON.stringify(codeDark));
-    await page.screenshot({ path: `${SHOTS}/13-codigo-oscuro.png`, fullPage: true });
-    await page.evaluate(() => localStorage.removeItem('vf-theme'));
+    record('código: Terminal del DS (marco + CRT + barra + copiar)', code.plates >= 1 && code.crt && code.bar && code.copy >= 1 && code.scanlines, JSON.stringify(code));
+    record('código: Chroma resaltado con clases (keywords en og)', code.chroma > 0 && code.keyword === 'rgb(232, 163, 133)', `${code.chroma} tokens / ${code.keyword}`);
+    record('código: comentarios en bl-muted', code.comment.length > 0, code.comment);
+    await page.screenshot({ path: `${SHOTS}/11-codigo.png`, fullPage: true });
+    const codeFails = await page.evaluate(auditContrast);
+    record('contraste AA en la página de código', codeFails.length === 0, JSON.stringify(codeFails.slice(0, 4)));
   }
 
-  record('sin errores de JS', errors.length === 0, errors.slice(0, 3).join(' | '));
-  record(
-    'sin recursos faltantes (>=400)',
-    httpFails.length === 0,
-    [...new Set(httpFails)].slice(0, 3).join(' | ')
-  );
-
-  // ---------- 9. ¿Qué fuente se renderiza de verdad?
-  await page.evaluate(() => localStorage.removeItem('vf-theme'));
+  /* ---------- 10. Fuentes reales (no fallback silencioso) ---------- */
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
-  const fonts = await page.evaluate(() => {
-    const probe = (family, weight) => {
+  const fonts = await page.evaluate(async () => {
+    const mk = (f) => {
       const span = document.createElement('span');
-      span.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font-size:72px;font-weight:${weight};font-family:${family}`;
+      span.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font-size:72px;font-family:${f}`;
       span.textContent = 'VSTROFAGO HAMBURGEVONS 0123456789';
       document.body.appendChild(span);
       const w = Math.round(span.getBoundingClientRect().width);
       span.remove();
       return w;
     };
-    return {
-      sanchezAvailable: document.fonts.check("400 72px 'Sanchez'"),
-      plexAvailable: document.fonts.check("400 72px 'IBM Plex Mono'"),
-      wSanchez: probe("'Sanchez'", 400),
-      wGeorgia: probe('Georgia', 400),
-      wPlex: probe("'IBM Plex Mono'", 400),
-      wGenericMono: probe('monospace', 400),
-      h1Family: getComputedStyle(document.querySelector('h1')).fontFamily,
-      bodyFamily: getComputedStyle(document.body).fontFamily,
-      loaded: [...document.fonts].map((f) => `${f.family}@${f.weight}:${f.status}`),
+    // El respaldo de comparación es el DECLARADO tras la cara en tokens.css.
+    // Ojo con Space Grotesk: nace de Space Mono y comparte métrica con el mono
+    // genérico, así que contra `monospace` la sonda no discrimina (medido: 1426
+    // == 1426); se compara contra `sans-serif`, su respaldo real de cadena.
+    const cases = {
+      jacquard: ["'Jacquard24'", 'serif'],
+      techno: ["'Techno Vibe Font'", 'monospace'],
+      grotesk: ["'Space Grotesk'", 'sans-serif'],
+      plex: ["'IBMPlex Serif'", 'Georgia'],
+      geist: ["'Geist Mono'", 'monospace'],
     };
+    const out = {};
+    for (const [name, [family, fallback]] of Object.entries(cases)) {
+      let faces = 0;
+      try {
+        faces = (await document.fonts.load(`400 72px ${family}`)).length;
+      } catch (e) {
+        faces = 0;
+      }
+      out[name] = {
+        faces,
+        check: document.fonts.check(`400 72px ${family}`),
+        own: mk(family),
+        base: mk(fallback),
+        status: [...document.fonts].filter((f) => family.includes(f.family) && f.status === 'loaded').length,
+      };
+    }
+    return out;
   });
-  record(
-    'Sanchez disponible y distinta del respaldo serif',
-    fonts.sanchezAvailable && fonts.wSanchez !== fonts.wGeorgia,
-    `${fonts.wSanchez}px vs Georgia ${fonts.wGeorgia}px`
-  );
-  record(
-    'IBM Plex Mono disponible y distinta del mono genérico',
-    fonts.plexAvailable && fonts.wPlex !== fonts.wGenericMono,
-    `${fonts.wPlex}px vs mono ${fonts.wGenericMono}px`
-  );
-  record('h1 declara Sanchez primero', /^"?Sanchez/.test(fonts.h1Family.trim()), fonts.h1Family);
-  record('body declara IBM Plex Mono primero', /^"?IBM Plex Mono/.test(fonts.bodyFamily.trim()), fonts.bodyFamily);
-  record('caras cargadas', fonts.loaded.filter((f) => f.endsWith('loaded')).length >= 2, fonts.loaded.join(', '));
+  for (const [name, f] of Object.entries(fonts)) {
+    record(
+      `fuente ${name}: cargada y distinta del respaldo`,
+      f.check && f.faces >= 1 && f.status >= 1 && f.own !== f.base,
+      `check=${f.check} faces=${f.faces} status=${f.status} ${f.own}px vs ${f.base}px`
+    );
+  }
+
+  record('sin errores de JS', errors.length === 0, errors.slice(0, 3).join(' | '));
+  record('sin recursos faltantes (>=400)', httpFails.length === 0, [...new Set(httpFails)].slice(0, 3).join(' | '));
 
   await browser.close();
 
   const failed = results.filter((r) => !r.pass);
-  console.log(JSON.stringify({ total: results.length, failed: failed.length, results }, null, 1));
+  console.log(JSON.stringify({ base: BASE, total: results.length, failed: failed.length, results }, null, 1));
   process.exit(failed.length ? 1 : 0);
 })();

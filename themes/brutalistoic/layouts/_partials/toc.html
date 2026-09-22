@@ -1,0 +1,16 @@
+{{- /* Placa de contenido: Card del DS (sin dither, para lectura densa) con el
+       índice como cuerpo. La etiqueta del kicker ES el summary (una sola vez:
+       duplicarla al plegar se ve como un rótulo de más). Según TocOpen el details
+       va abierto o cerrado; sin JS la versión cerrada sigue siendo abrible. */ -}}
+{{- if and site.Params.ShowToc (gt (len .TableOfContents) 80) -}}
+<section class="bl-card vf-toc">
+  <div class="bl-card__body">
+    <details class="vf-toc__details"{{ if site.Params.TocOpen }} open{{ end }}>
+      <summary class="bl-label bl-card__kicker">{{ i18n "toc" }} <span class="vf-toc__caret" aria-hidden="true">→</span></summary>
+      <nav class="vf-toc__nav" aria-label="{{ i18n "toc" }}">
+        {{ .TableOfContents }}
+      </nav>
+    </details>
+  </div>
+</section>
+{{- end -}}

@@ -1,16 +1,35 @@
 # Tema Hugo «brutalistoic» para el blog — diseño
 
-Fecha: 2026-09-21 · Estado: propuesto (pendiente de aprobación)
+Fecha: 2026-09-21 · **Revisión 2: 2026-09-22** · Estado: **aprobado (desarrollo autónomo autorizado) · implementado 2026-09-22**
 Alcance: sustituir el tema del blog (hoy `plano`) por un tema propio que implemente el DS
 brutalistoic como sistema principal de vstrofago. Solo el blog: el tema vive en `themes/`
 committed; «Plano» sigue su camino aparte (extracción/publicación independiente).
 
+## Cambios en la revisión 2
+
+El DS se actualizó a un sistema de **un solo tema** (repo `vstrofago/brutalistoic`, commit
+`e026da5`); esta revisión reescribe el plan contra él. La revisión 1 no es implementable tal
+cual. Lo que asumía y ya no existe:
+
+| Rev. 1 asumía | Hoy |
+|---|---|
+| `paper` canónico (verde militar, tinta negra) y `terminal` opt-in con toggle, `localStorage` y script anti-parpadeo | **Un tema, `terminal`** (oscuro, `bg` `#141414`). No hay toggle, ni `localStorage`, ni `prefers-color-scheme` |
+| Títulos de entrada en `slab` (Sanchez) | `ArticleHeader` usa `gothic` (**Jacquard24**) por defecto; `slab` queda para notas y READMEs |
+| Cuerpo y UI en Geist Mono; entradilla en IBM Plex Serif | Cuerpo y UI en **Space Grotesk**; IBM Plex Serif **solo** dentro de `.bl-prose`; Geist Mono solo código y ASCII |
+| Caras a cargar: Geist Mono, IBM Plex Serif, Sanchez, Jacquard24 | + **Space Grotesk** (cuerpo/UI, obligatoria) y **Techno Vibe** (subtítulos y eyebrows, obligatoria). Sanchez deja de hacer falta |
+| Tokens `ink`, `ink-muted`, `line`, `line-soft`, `accent-text`, `surface`, `surface-2`, `focus` | `bg`, `fg`, `fgplus`, `og`, `gr`, `yl`, `rd`, `bl`, `mg` + derivados `--bl-muted`, `--bl-line`, `--bl-hover` |
+| Texto tenue solo sobre `surface`/`surface-2` | No hay superficies más claras: las tarjetas se separan por **marco**. `--bl-muted` es 5.2:1 sobre `bg` |
+| 18 componentes | **19** (+`MarbleDither`); `Cover`, `TitleCard` y `Slide*` son layouts de referencia |
+| Chroma: comentarios `ink-muted`, keywords `accent-text` | Comentarios `--bl-muted`, keywords `--og`, números `--fgplus` (tabulares) |
+| H1 44px en slab | H1 **Jacquard24** (`.bl-h1`, 42px mínimo, siempre el título mayor de la página; `.bl-gothic`/`--gothic-scale` para tamaños propios) |
+
 ## Objetivo
 
 Un tema Hugo que renderice el blog bilingüe (EN/ES) con brutalistoic: flat 2D sin sombras,
-`paper` canónico (verde militar, tinta negra, lectura larga) y `terminal` como variante
-oscura opt-in. La firma ASCII viva (AsciiBanner) solo en la portada; el resto del sitio sin
-React. Sin JS, el sitio se ve completo y correcto.
+un solo tema oscuro `terminal`, tipografía por rol (Jacquard24 h1, Techno Vibe subtítulos,
+Space Grotesk cuerpo y UI, IBM Plex Serif solo en el cuerpo de las entradas, Geist Mono solo
+código). La firma ASCII viva (AsciiBanner) solo en la portada; el resto del sitio sin React.
+Sin JS, el sitio se ve completo y correcto.
 
 ## Decisiones
 
@@ -20,60 +39,68 @@ React. Sin JS, el sitio se ve completo y correcto.
   `brutalistoic` (alternativas si prefieres: `vstrofago`, `devoured`).
 - **D2 — Integración del DS.** Copia vendorizada **verbatim** en
   `themes/brutalistoic/static/vendor/brutalistoic/{tokens,dist,fonts}` (la receta del skill:
-  `tokens/` y `fonts/` hermanos; `verify-vendor.mjs` debe pasar). `tokens.css` y
-  `bundle.css` se enlazan tal cual (sin pasar por el pipeline, para conservar las rutas
+  `tokens/` y `fonts/` hermanos; `verify-vendor.mjs` debe pasar, 19 componentes). `tokens.css`
+  y `bundle.css` se enlazan tal cual (sin pasar por el pipeline, para conservar las rutas
   relativas de `@font-face`). Los archivos React 18 UMD (MIT) se añaden a
   `vendor/brutalistoic/react/` (el repo del DS no los trae). La capa de sitio (chrome) vive
   en `assets/css/` y sí pasa por el pipeline (concat + minify + fingerprint) como hoy.
-- **D3 — Tema.** `data-theme="paper"` en el documento; `terminal` es opt-in con el toggle
-  (persistencia `localStorage`, script anti-parpadeo en `<head>`). Nada de
-  `prefers-color-scheme`. Sin JS o sin elección guardada: paper.
+- **D3 — Tema.** Un solo tema: `data-theme="terminal"` en el documento con `.bl-root` en
+  `<body>`. **No hay toggle**: se elimina el conmutador, la clave de `localStorage` y el
+  script anti-parpadeo de la cabecera. Nada de `prefers-color-scheme`.
 - **D4 — Componentes.** Los componentes React que aportan estructura se reproducen en
   plantillas con el **mismo DOM y clases `.bl-*`** (Card, ArticleHeader, Terminal, Badge,
-  Field, Frame/HUD, Logo, Button). Criterio: dump headless del componente real y contraste
-  contra el markup renderizado; nada de clases paralelas para cosas que el DS ya nombra.
-  `.vf-*` queda solo para layout/chrome (página, cabecera, pie, hileras), nunca para
-  componentes.
+  Field, Frame/HUD, Logo, Button, Table). Criterio: dump headless del componente real y
+  contraste contra el markup renderizado; nada de clases paralelas para cosas que el DS ya
+  nombra. `.vf-*` queda solo para layout/chrome (página, cabecera, pie, hileras), nunca para
+  componentes. Los tonos de `Badge` disponibles son `default`, `accent`, `ok`, `warn`, `err`,
+  `info`, `outline`.
 - **D5 — Movimiento.** Solo el del DS: animaciones CSS de `bundle.css` (flicker CRT, cursor,
   pulse del logo) y transiciones de 150-250 ms en hover. Se **elimina** el sistema de reveal
   por scroll del tema anterior (no es contrato del DS). `prefers-reduced-motion` detiene
   todo (ya está resuelto en `bundle.css`).
 - **D6 — Portada.** El AsciiBanner es la única isla React, solo en la home, cargada en
   diferido con `IntersectionObserver` (React + bundle se descargan solo cuando el banner
-  entra en pantalla; ~1.4 MB comprimido que no toca ningún otro page load). Sin JS o con
+  entra en pantalla; ~2.4 MB que no toca ningún otro page load). Sin JS o con
   reduced-motion: **fotograma horneado** — se extrae el markup quieto del propio bundle con
-  Playwright y se commitea como partial estático (mismas capas `__bg/__fg/__hot`), con
-  altura reservada: nunca hay hueco ni CLS. Si la isla falla, el fotograma se queda.
+  Playwright y se commitea como partial estático, con altura reservada: nunca hay hueco ni
+  CLS. Si la isla falla, el fotograma se queda. Props del componente: `rows`, `size`, `alt`;
+  el banner es ASCII puro (sin barra de estado ni corchetes HUD), así que el fotograma
+  tampoco los lleva.
 - **D7 — Código.** Bloques como `.bl-terminal` + `.bl-crt` (el único estilo de código del
-  DS, siempre oscuro incluso en paper). El resaltado sigue siendo Chroma (config actual,
-  clases) con un mapeo a tokens del DS: comentarios `ink-muted`, palabras clave
-  `accent-text`, números `ink-strong` tabulares, error con subrayado (sin rojo semántico).
-  Botón de copiar vanilla (el de hoy). El typing del componente no se usa en artículos.
+  DS, siempre oscuro). El resaltado sigue siendo Chroma (config actual, clases) con un mapeo
+  a tokens del DS: comentarios `--bl-muted`, palabras clave `--og`, números `--fgplus`
+  tabulares, tipos y builtins `--bl`, error `--rd` con subrayado (nunca color solo). El
+  acento de señal de la pieza editorial es `mg`, reservado a kickers y eyebrows: Chroma no
+  introduce un segundo acento. Botón de copiar vanilla (el de hoy). El typing del componente
+  no se usa en artículos.
 - **D8 — Búsqueda.** Mismo índice JSON y mismo motor vanilla; restilizado a `.bl-field`
   (prompt `>`) + filas de resultado. Sin JS: mensaje `noscript` (como hoy).
-- **D9 — Fuentes.** Solo caras con licencia clara (todas OFL): Geist Mono (Regular, Medium),
-  IBM Plex Serif (Regular, Italic), Sanchez (Regular) y Jacquard24 (para títulos
-  `gothic`; se descarga solo si una entrada lo usa). Se excluyen Techno Vibe, Godwin, DFM*
-  y Open Code (licencia ausente o «all rights reserved»; además, innecesarias aquí). Van con
-  `OFL.txt` y atribución, como en Plano.
+- **D9 — Fuentes.** Se vendorizan las caras que el tema usa: **Space Grotesk** (variable
+  300-700; cuerpo y UI), **Jacquard24** (H1), **Techno Vibe** (subtítulos y eyebrows),
+  **IBM Plex Serif** (Regular, Italic; cuerpo de entradas) y **Geist Mono** (Regular, Medium;
+  código y ASCII). Se excluyen DFM* y Open Code (acentos especiales que el blog no usa).
+  **Pendiente de licencia:** el repo del DS no trae `LICENSE` ni texto de licencia por cara;
+  Techno Vibe y Jacquard24 hay que verificarlas antes de publicar (Space Grotesk, IBM Plex
+  Serif y Geist Mono son OFL). Van con `OFL.txt` y atribución, como en Plano.
 - **D10 — Paridad funcional.** Mismos params de `hugo.toml` e i18n keys que hoy: multiidioma
   con `translationKey`, menu, TOC, tiempo de lectura, palabras, breadcrumbs, prev/next,
-  tags/categorías, RSS, sitemap, `index.json`, 404. La copia (i18n, pie, kickers) se
-  reescribe a la voz del DS: línea de estado, sin exclamaciones, sin emoji, números exactos.
+  tags/categorías, RSS, sitemap, `index.json`, 404. Se retira solo la clave del toggle de
+  tema. La copia (i18n, pie, kickers) se reescribe a la voz del DS: línea de estado, sin
+  exclamaciones, sin emoji, números exactos.
 
 ## Superficies
 
 | Superficie | Plantilla | Piezas del DS |
 |---|---|---|
-| Base | `baseof` | `data-theme="paper"`, `.bl-root` en `<body>`, skip-link, toggle anti-parpadeo |
-| Portada | `home` | kicker + título slab (Sanchez) + entradilla serif; **AsciiBanner** (isla); destacada como `Card` (dither estático, sin HUD); índice numerado `N.º NN` en mono; badges de tags |
-| Lista de sección | `list` | cabecera kicker + display; filas con regla 1px, meta `caption`, badges; paginador mono |
-| Entrada | `single` | `ArticleHeader` (kicker, slab 44px, deck serif, meta caption, dither estático), placa de TOC, `.bl-prose` (18px/1.7, 66ch), `.bl-terminal` + `.bl-crt` en código, blockquote del DS, badges, prev/next |
+| Base | `baseof` | `data-theme="terminal"`, `.bl-root` en `<body>`, skip-link |
+| Portada | `home` | eyebrow `mg` + H1 `gothic-title` (Jacquard24) + entradilla en `body` (Space Grotesk); **AsciiBanner** (isla); destacada como `Card` (dither estático, sin HUD); índice numerado `N.º NN` en mono; badges de tags |
+| Lista de sección | `list` | cabecera kicker + H1 Jacquard; filas con regla `--bl-line`, meta `caption`, badges; paginador mono |
+| Entrada | `single` | `ArticleHeader` (kicker, Jacquard h1 `gothic`, deck Techno Vibe, meta `caption`, dither estático), placa de TOC, `.bl-prose` (IBM Plex Serif 18px/1.7, 66ch), `.bl-terminal` + `.bl-crt` en código, blockquote del DS, badges, prev/next |
 | Acerca | `single` | mismo contrato |
 | Taxonomía / término | `taxonomy`, `term` | badges con contador, filas |
 | Búsqueda | `search` | `.bl-field` con prompt `>`; resultados en filas; estado en `caption` |
 | 404 | `404` | placa con `Frame` (HUD corners) + enlaces; sin marco nativo |
-| Chrome | `_partials` | cabecera: `Logo` (SVG inline) + wordmark mono + nav + idioma + toggle (`Button` ghost); pie: línea de estado mono (`caption`) con palabra de estado |
+| Chrome | `_partials` | cabecera: `Logo` (SVG inline) + wordmark + nav + idioma; pie: línea de estado mono (`caption`) con palabra de estado. Sin toggle de tema |
 
 ## Verificación (criterio de aceptación)
 
@@ -81,34 +108,35 @@ React. Sin JS, el sitio se ve completo y correcto.
    `/blog/` en servidor local.
 2. Barrido de residuos en lo propio (search_files): sin `box-shadow`, `text-shadow`,
    `backdrop-filter` ni gradientes fuera del CRT/dither — que son del DS vendorizado; sin
-   hexes inline en la capa de sitio.
-3. Auditoría de contraste real (Playwright) por página y por tema, umbral AA; texto tenue
-   solo sobre `surface`/`surface-2`.
+   hexes inline en la capa de sitio; sin residuos del sistema anterior
+   (`--surface|--ink|--accent-text|data-theme="paper"`).
+3. Auditoría de contraste real (Playwright) por página, umbral AA. Un solo tema: el texto
+   tenue es `--bl-muted` (5.2:1 sobre `bg`) y la línea decorativa `--bl-line` nunca lleva
+   texto.
 4. Markup de componentes: dump headless del bundle vs. HTML renderizado → mismas clases.
 5. `prefers-reduced-motion`: nada anima; el banner muestra el fotograma (no un dibujo a
    medias); el CRT no parpadea.
-6. Sin JS: paper, navegación/lectura/TOC funcionan, banner con fotograma, búsqueda con
-   mensaje `noscript`, toggle ausente sin romper nada.
-7. Fuentes: `document.fonts.check` por cara usada; sin fallback silencioso a sistema.
+6. Sin JS: navegación/lectura/TOC funcionan, banner con fotograma, búsqueda con mensaje
+   `noscript`.
+7. Fuentes: `document.fonts.check` por cara usada (Jacquard24, Techno Vibe, Space Grotesk,
+   IBM Plex Serif, Geist Mono); sin fallback silencioso a sistema.
 8. Impresión: chrome fuera, sin dither ni CRT (código legible en claro), dentro de
    `@media print`.
-9. Móvil 390px sin overflow; ambos temas en todas las páginas.
-10. Entrega renderizada: capturas (paper/terminal, escritorio/móvil) + servidor local para
-    recorrerlo.
+9. Móvil 390px sin overflow.
+10. Entrega renderizada: capturas (escritorio/móvil) + servidor local para recorrerlo.
 
 ## Extras de marca (dentro del alcance)
 
 - Favicon desde el emblema (estrella de píxel): SVG + PNG 180 (reemplaza el actual).
-- Tarjeta Open Graph 1200×630 compuesta con primitivas del DS (flat, sin gradientes),
-  reemplaza `logo-lockup.png` en `og:image`/`twitter:image`.
+- Tarjeta Open Graph 1200×630 compuesta con tokens del DS (bloques flat y dither Bayer, al
+  estilo de `Cover`; sin gradientes), reemplaza `logo-lockup.png` en `og:image`/`twitter:image`.
 
 ## Fuera de alcance
 
 - Publicar el tema como repo propio (decidido: solo el blog).
 - Cambios en el DS: cualquier necesidad nueva se propone en el repo del DS, aquí no se
   forkea ni se edita la copia vendorizada.
-- Contenido de las entradas y su front matter (salvo el interruptor opcional de título
-  `gothic`).
+- Contenido de las entradas y su front matter.
 
 ## Coordinación
 
@@ -119,6 +147,27 @@ commitear/escalonar sin mezclar su diff con el mío. La implementación no toca
 
 ## Pendiente al cerrar
 
-- Actualizar este documento a «aprobado (desarrollo autónomo autorizado)» al recibir el sí.
+- ~~Actualizar este documento a «aprobado (desarrollo autónomo autorizado)» al recibir el sí.~~ Hecho.
+- **Verificar la licencia de Techno Vibe y Jacquard24 antes de publicar el sitio (D9).**
+  Jacquard24 resuelta: SIL OFL 1.1 (The Soft Type Project Authors). **Techno Vibe sigue
+  sin licencia en su binario**, igual que DFM* y OpenCode (estas tres no las usa el tema).
+  Detalle y copyright cara por cara en
+  `themes/brutalistoic/static/vendor/brutalistoic/fonts/LICENSE.md` (+ `OFL-1.1.txt`).
+  Es el único punto abierto antes de desplegar.
 - Registrar en el skill `hugo-github-pages-bilingual` lo que este tema enseñe (consumo de
   un DS React desde un sitio estático).
+
+## Desviaciones conscientes sobre el diseño
+
+- **D2 / D9 en tensión sobre las fuentes.** La copia del DS se vendoriza *verbatim* (los
+  15 binarios) porque `verify-vendor.mjs` exige 15 archivos y 15 `@font-face` resolviendo;
+  el tema solo *usa* cinco caras. Las otras diez no se descargan nunca en el navegador.
+- **D5 cumplido al pie: no se reprodujo el relleno ASCII de los botones.** El efecto es
+  comportamiento del componente React; el plan acota el movimiento al de `bundle.css` más
+  transiciones de hover, así que los botones quedan en contorno que se refuerza al pasar.
+- **D7: el bloque de código conserva el markup de Chroma dentro de la placa Terminal**
+  (el plan mantiene la configuración y las clases de Chroma). La estructura `.bl-terminal`
+  + `.bl-crt` + barra + COPY es la del componente; el interior es el resaltado de Hugo.
+- **El dither Bayer estático se pinta en un `canvas.bl-bayer` con JS propio** (40 líneas,
+  sin React) para no cargar el bundle donde no hace falta. Sin JS, la superficie queda
+  limpia: el dither es decorativo y el DOM/clases son los del componente.

@@ -1,0 +1,26 @@
+{{ define "main" }}
+{{- $terms := .Pages -}}
+<div class="vf-frame">
+
+  <header class="vf-list-head">
+    <p class="bl-eyebrow">{{ .Data.Plural | default (i18n "allTags") }} · {{ len $terms }} {{ i18n "tags" | lower }}</p>
+    <h1 class="bl-h1 vf-list-head__title">{{ .Title }}</h1>
+    {{- with .Content }}
+    <div class="vf-list-head__lead">{{ . }}</div>
+    {{- end }}
+  </header>
+
+  {{- if $terms }}
+  <ul class="vf-tag-row vf-tag-cloud">
+    {{- range $terms }}
+    <li>
+      <a class="bl-badge" href="{{ .RelPermalink }}">{{ .LinkTitle }}<span class="vf-tag__count">&nbsp;·&nbsp;{{ len .Pages }}</span></a>
+    </li>
+    {{- end }}
+  </ul>
+  {{- else }}
+  <p class="bl-caption">{{ i18n "noPosts" }}</p>
+  {{- end }}
+
+</div>
+{{ end }}

@@ -1,0 +1,116 @@
+[skipToContent]
+other = "Ir al contenido"
+
+[menu]
+other = "Menú"
+
+[home]
+other = "Inicio"
+
+[posts]
+other = "entradas"
+
+[index]
+other = "Índice"
+
+[featured]
+other = "Destacada"
+
+[moreEntries]
+other = "Más entradas"
+
+[allEntries]
+other = "Todas las entradas"
+
+[latest]
+other = "Últimas entradas"
+
+[readMore]
+other = "Leer entrada"
+
+[readingTime]
+other = "{{ .Count }} min"
+
+[words]
+other = "{{ .Count }} palabras"
+
+[updated]
+other = "Actualizado"
+
+[toc]
+other = "Contenido"
+
+[tags]
+other = "Temas"
+
+[categories]
+other = "Categorías"
+
+[prevPost]
+other = "Anterior"
+
+[nextPost]
+other = "Siguiente"
+
+[newer]
+other = "Más reciente"
+
+[older]
+other = "Más antigua"
+
+[page]
+other = "Página {{ .Count }}"
+
+[notFoundTitle]
+other = "Ruta no encontrada"
+
+[notFoundText]
+other = "Esta dirección no está en el índice. La página no existe, o se movió."
+
+[backHome]
+other = "Volver al inicio"
+
+[langSwitch]
+other = "Idioma"
+
+[copyCode]
+other = "Copiar"
+
+[copied]
+other = "Copiado"
+
+[search]
+other = "Buscar"
+
+[searchPlaceholder]
+other = "Escribe para buscar"
+
+[searchNoResults]
+other = "Ninguna entrada coincide con esa búsqueda."
+
+[searchResults]
+other = "{{ .Count }} entradas"
+
+[searchResultsLabel]
+other = "entradas"
+
+[searchLoading]
+other = "Buscando…"
+
+[searchNoJs]
+other = "La búsqueda corre en tu navegador, así que necesita JavaScript. El índice crudo está en index.json."
+
+[noPosts]
+other = "Todavía no hay entradas."
+
+[builtWith]
+other = "Hugo · tema propio"
+
+[rss]
+other = "RSS"
+
+[allTags]
+other = "Todos los temas"
+
+[entriesIn]
+other = "Entradas de"

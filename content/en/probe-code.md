@@ -1,8 +1,9 @@
 ---
 # Fixture del tema, no contenido del blog.
-# `draft: true` => el servidor de desarrollo de Hugo SÍ la sirve (así
-# docs/superpowers/verify-theme.cjs puede ejercitar la placa de código y su
-# resaltado) y la compilación de producción la EXCLUYE. No se publica nunca.
+# `draft: true` => solo el servidor de desarrollo con `--buildDrafts` la sirve
+# (sin la bandera responde 404) y la compilación de producción la EXCLUYE. No se
+# publica nunca. Es para que docs/superpowers/verify-theme.cjs pueda ejercitar la
+# placa de código y su resaltado.
 title: "Code probe"
 date: 2026-09-17
 draft: true

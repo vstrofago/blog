@@ -1,0 +1,31 @@
+{{ define "main" }}
+<div class="vf-frame">
+  <header class="vf-list-head">
+    <p class="bl-eyebrow">{{ site.Title }} · {{ i18n "index" }}</p>
+    <h1 class="bl-h1 vf-list-head__title">{{ .Title }}</h1>
+  </header>
+
+  {{- /* Field del DS: prompt ">" + caret. Sin JS queda el mensaje noscript. */}}
+  <div class="bl-field vf-search" data-bl-search
+    data-bl-index="{{ "index.json" | relLangURL }}"
+    data-bl-label-none="{{ i18n "searchNoResults" }}"
+    data-bl-label-count="{{ i18n "searchResultsLabel" }}">
+    <label class="bl-label" for="bl-search-input" style="color: var(--fgplus);">{{ i18n "search" }}</label>
+    <div class="bl-field__box">
+      <span class="bl-field__prompt" aria-hidden="true">&gt;</span>
+      <input id="bl-search-input" class="bl-field__input" type="search" data-bl-search-input
+        placeholder="{{ i18n "searchPlaceholder" }}" autocomplete="off" spellcheck="false" autofocus>
+    </div>
+    <span class="bl-caption bl-field__msg" data-bl-search-status aria-live="polite"></span>
+    <ul class="vf-index vf-search__results" data-bl-search-results></ul>
+    <noscript>
+      <p class="bl-caption">{{ i18n "searchNoJs" }}</p>
+    </noscript>
+  </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+{{- $search := resources.Get "js/bl-search.js" | minify | fingerprint -}}
+<script src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}" defer></script>
+{{ end }}

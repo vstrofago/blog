@@ -1,6 +1,6 @@
 baseURL = 'https://vstrofago.github.io/blog/'
 title = 'VSTROFAGO'
-theme = 'plano'
+theme = 'brutalistoic'
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
@@ -55,9 +55,6 @@ locale = 'en-US'
 
 [params]
   author = 'VSTROFAGO'
-  # Chrome: el tema es claro; la variante oscura del footer/encabezado se activa con
-  # el botón (opt-in). El toggle no usa prefers-color-scheme.
-  disableThemeToggle = false
   # Contenido
   mainSections = ['posts']
   homeLimit = 5

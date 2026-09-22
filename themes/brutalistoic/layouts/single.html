@@ -1,0 +1,65 @@
+{{ define "main" }}
+<article class="vf-article">
+  {{ partial "breadcrumbs.html" . }}
+
+  {{- /* ArticleHeader del DS: kicker, H1 Jacquard24, deck Techno Vibe, meta en
+         caption, sobre dither Bayer estático y de baja opacidad. */}}
+  <header class="bl-article-head">
+    <canvas class="bl-bayer" aria-hidden="true"></canvas>
+    <div class="bl-article-head__inner">
+      <p class="bl-label bl-article-head__kicker">{{ with .Section }}{{ . | upper }}{{ else }}{{ i18n "index" | upper }}{{ end }}</p>
+      <h1 class="bl-article-head__title">{{ .Title }}</h1>
+      {{- $deck := "" -}}
+      {{- with .Params.deck }}{{ $deck = . }}{{ else }}{{ with .Summary }}{{ $deck = . | plainify }}{{ end }}{{ end -}}
+      {{- with $deck }}
+      <p class="bl-article-head__deck">{{ . }}</p>
+      {{- end }}
+      <p class="bl-caption bl-article-head__meta">{{ partial "post-meta.html" (dict "page" .) }}</p>
+    </div>
+  </header>
+
+  {{ partial "toc.html" . }}
+
+  <div class="bl-prose">{{ .Content }}</div>
+
+  <footer class="vf-post-foot">
+    {{- with .GetTerms "categories" }}
+    <p class="bl-label vf-post-foot__label">{{ i18n "categories" }}</p>
+    <ul class="vf-tag-row">
+      {{- range . }}
+      <li><a class="bl-badge" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- end }}
+    {{- with .GetTerms "tags" }}
+    <p class="bl-label vf-post-foot__label">{{ i18n "tags" }}</p>
+    <ul class="vf-tag-row">
+      {{- range . }}
+      <li><a class="bl-badge bl-badge--outline" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- end }}
+
+    {{- if site.Params.ShowPostNavLinks }}
+      {{- $prev := .PrevInSection | default .Prev }}
+      {{- $next := .NextInSection | default .Next }}
+      {{- if or $prev $next }}
+      <nav class="vf-post-nav" aria-label="{{ i18n "prevPost" }} / {{ i18n "nextPost" }}">
+        {{- with $prev }}
+        <a class="vf-post-nav__item" href="{{ .RelPermalink }}" rel="prev">
+          <span class="bl-label">←&nbsp;{{ i18n "prevPost" }}</span>
+          <span class="bl-subtitle vf-post-nav__title">{{ .Title }}</span>
+        </a>
+        {{- end }}
+        {{- with $next }}
+        <a class="vf-post-nav__item vf-post-nav__item--next" href="{{ .RelPermalink }}" rel="next">
+          <span class="bl-label">{{ i18n "nextPost" }}&nbsp;→</span>
+          <span class="bl-subtitle vf-post-nav__title">{{ .Title }}</span>
+        </a>
+        {{- end }}
+      </nav>
+      {{- end }}
+    {{- end }}
+  </footer>
+</article>
+{{ end }}

@@ -1,0 +1,8 @@
+{{- /* Imagen con pie: marco --bl-line y epígrafe en caption. */ -}}
+{{- $alt := .PlainText | default .Text -}}
+<figure class="vf-figure">
+  <img src="{{ .Destination | safeURL }}" alt="{{ $alt }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
+  {{- with .Title }}
+  <figcaption class="bl-caption vf-figure__caption">{{ . }}</figcaption>
+  {{- end }}
+</figure>

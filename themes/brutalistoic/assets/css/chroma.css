@@ -1,0 +1,43 @@
+/* brutalistoic — resaltado Chroma del blog mapeado a tokens del DS (D7 del diseño).
+   Regla del DS: el acento de señal de una pieza editorial es `mg`, y Chroma no
+   introduce un segundo acento. Así que el código se resuelve SOLO con `og`,
+   `fgplus`, `bl`, `bl-muted` y `rd`: comentarios apagados, palabras clave en el
+   acento de marca, literales en `fgplus` (cifras tabulares), nombres/tipos en `bl`.
+   El error va en `rd` y SIEMPRE con subrayado: nunca el color solo. */
+
+/* espacios y puntuación: texto corriente */
+.chroma, .chroma .w, .chroma .p, .chroma .o, .chroma .x { color: var(--fg); background: transparent; }
+.chroma .hl, .chroma .ln { background: transparent; }
+
+/* comentarios y directivas: apagados */
+.chroma .c, .chroma .c1, .chroma .cm, .chroma .cp, .chroma .cpf, .chroma .cs,
+.chroma .sd, .chroma .dl { color: var(--bl-muted); font-style: italic; }
+
+/* palabras clave: acento de marca */
+.chroma .k, .chroma .kc, .chroma .kd, .chroma .kn, .chroma .kp, .chroma .kr,
+.chroma .kt, .chroma .kv { color: var(--og); }
+
+/* literales (números y cadenas): cifras de valor */
+.chroma .m, .chroma .mf, .chroma .mh, .chroma .mi, .chroma .mo, .chroma .mx,
+.chroma .my, .chroma .mb, .chroma .il { color: var(--fgplus); font-variant-numeric: tabular-nums; }
+.chroma .s, .chroma .sa, .chroma .sb, .chroma .sc, .chroma .se, .chroma .sh,
+.chroma .si, .chroma .sx, .chroma .sr, .chroma .s1, .chroma .s2, .chroma .ss,
+.chroma .s2 { color: var(--fgplus); }
+
+/* nombres, tipos y builtins */
+.chroma .n, .chroma .na, .chroma .nb, .chroma .bp, .chroma .nc, .chroma .nd,
+.chroma .ne, .chroma .nf, .chroma .fm, .chroma .ni, .chroma .nn, .chroma .no,
+.chroma .py, .chroma .nt, .chroma .nv, .chroma .vc, .chroma .vg, .chroma .vi,
+.chroma .vn, .chroma .ge, .chroma .gs { color: var(--bl); }
+
+/* genéricos: destacado */
+.chroma .gh, .chroma .gu { color: var(--fgplus); }
+.chroma .gd, .chroma .gr { color: var(--rd); text-decoration: underline; }
+.chroma .gi { color: var(--gr); text-decoration: underline; }
+.chroma .go { color: var(--bl-muted); }
+
+/* error: color + palabra (subrayado), nunca color solo */
+.chroma .err { color: var(--rd); text-decoration: underline; }
+
+/* números de línea (si la configuración los activa) */
+.chroma .ln { color: var(--bl-muted); text-align: right; user-select: none; }

@@ -1,0 +1,12 @@
+{{ define "main" }}
+<div class="vf-frame">
+  {{- /* Placa sin marco nativo: es la única superficie con esquinas HUD. */}}
+  <section class="bl-frame vf-404">
+    {{ partial "hud-corners.html" (dict "color" "var(--og)") }}
+    <p class="bl-label vf-404__kicker">404 · {{ site.Title }}</p>
+    <h1 class="bl-h1 vf-404__title">{{ i18n "notFoundTitle" }}</h1>
+    <p class="bl-caption vf-404__text">{{ i18n "notFoundText" }}</p>
+    <a class="bl-btn bl-btn--primary" href="{{ site.Home.RelPermalink }}"><span class="bl-btn__label"><span>{{ i18n "backHome" }}</span></span></a>
+  </section>
+</div>
+{{ end }}

@@ -1,0 +1,14 @@
+{{- /* Cambio de idioma: se prefiere la traducción de ESTA página; si no existe,
+       cae a la home del otro idioma. Nunca enlaza a un 404. El idioma actual se
+       marca como texto (una sola letra sin contexto no se lee como selector). */ -}}
+{{- $translations := .Translations -}}
+{{- if not $translations }}{{ $translations = site.Home.Translations }}{{ end -}}
+{{- with $translations }}
+<nav class="vf-lang" aria-label="{{ i18n "langSwitch" }}">
+  <span class="bl-label vf-lang__link is-active" aria-current="true">{{ site.Language.Lang | upper }}</span>
+  {{- range . }}
+  <a class="bl-label vf-lang__link" href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}"
+    title="{{ .Language.Label | default (.Language.Lang | upper) }}">{{ .Language.Lang | upper }}</a>
+  {{- end }}
+</nav>
+{{- end }}
