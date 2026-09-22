@@ -27,6 +27,6 @@
   <p class="bl-caption">{{ i18n "noPosts" }}</p>
   {{- end }}
 
-  <p class="bl-caption"><a href="{{ (printf "%s/" (.Data.Plural)) | relLangURL }}">{{ i18n "allTags" }}&nbsp;→</a></p>
+  <p class="bl-caption"><a class="vf-list-head__link" href="{{ (printf "%s/" (.Data.Plural)) | relLangURL }}">{{ i18n "allTags" }}&nbsp;→</a></p>
 </div>
 {{ end }}

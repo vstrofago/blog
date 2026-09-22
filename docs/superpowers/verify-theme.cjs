@@ -378,6 +378,21 @@ const classCombos = (html) => {
   await page.goto(`${BASE}posts/`, { waitUntil: 'networkidle' });
   const nums = await page.locator('.vf-entry__num').allTextContents();
   record('lista: numeración N.º NN en mono', nums.length > 0 && nums.every((n) => /N\.º \d\d/.test(n.trim())), nums.join(','));
+  const linkAudit = await page.evaluate(() => {
+    // Azul por defecto del navegador = enlace sin estilo propio; todo enlace
+    // tiene que salir de la paleta del DS.
+    const ua = [...document.querySelectorAll('a')].map((a) => getComputedStyle(a).color);
+    const defaultBlue = ua.filter((c) => c === 'rgb(0, 0, 238)' || c === 'rgb(0, 0, 255)');
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--og)';
+    document.body.appendChild(probe);
+    const og = getComputedStyle(probe).color;
+    probe.remove();
+    const rss = document.querySelector('.vf-list-head__link');
+    return { defaultBlue: defaultBlue.length, rssColor: rss ? getComputedStyle(rss).color : '', og };
+  });
+  record('ningún enlace con el azul por defecto del navegador', linkAudit.defaultBlue === 0, linkAudit.defaultBlue);
+  record('RSS ↗ con el acento de la paleta (og)', linkAudit.rssColor === linkAudit.og, `${linkAudit.rssColor} == ${linkAudit.og}`);
   await walk();
   await page.screenshot({ path: `${SHOTS}/05-lista.png`, fullPage: true });
 

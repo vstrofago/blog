@@ -36,7 +36,7 @@ img { max-width: 100%; height: auto; }
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--space-4); padding: var(--space-4) 0; flex-wrap: wrap;
 }
-.vf-brand { display: inline-flex; align-items: center; gap: var(--space-3); text-decoration: none; }
+.vf-brand { display: inline-flex; align-items: center; gap: var(--space-3); color: var(--fgplus); text-decoration: none; }
 .vf-brand .bl-logo { width: var(--space-6); height: var(--space-6); }
 .vf-brand__mark { color: var(--fgplus); }
 .vf-chrome { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
@@ -71,6 +71,10 @@ img { max-width: 100%; height: auto; }
 .vf-list-head .bl-eyebrow { margin: 0 0 var(--space-5); }
 .vf-list-head__title { font-size: calc(42px * var(--gothic-scale)); }
 .vf-list-head__lead { margin-top: var(--space-4); max-width: 60ch; font: var(--text-body); }
+/* Enlaces de acción de la cabecera (RSS ↗, todos los temas →): el acento de señal
+   del DS, nunca el azul por defecto del navegador. */
+.vf-list-head__link { color: var(--og); text-decoration: none; }
+.vf-list-head__link:hover { color: var(--fgplus); }
 
 .vf-section-head {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);

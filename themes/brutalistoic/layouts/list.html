@@ -16,7 +16,7 @@
     {{- end }}
     {{- if site.Params.ShowRssButtonInSectionTermList }}
     {{- with .OutputFormats.Get "rss" }}
-    <p class="bl-caption"><a href="{{ .RelPermalink }}">{{ i18n "rss" }}&nbsp;↗</a></p>
+    <p class="bl-caption"><a class="vf-list-head__link" href="{{ .RelPermalink }}">{{ i18n "rss" }}&nbsp;↗</a></p>
     {{- end }}
     {{- end }}
   </header>
