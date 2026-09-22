@@ -1,11 +1,12 @@
-{{- /* Fila del índice: número de entrada (mono), título (tech-subtitle), resumen,
-       meta en caption y temas como Badge. Regla inferior en --bl-line. */ -}}
+{{- /* Fila del índice: número de entrada (mono), título en Sanchez (slab, tipografía
+       del blog), resumen en IBM Plex Serif, meta en caption y temas como Badge.
+       Regla inferior en --bl-line. */ -}}
 {{- $page := .page -}}
 {{- $num := .num | default "" -}}
 <li class="vf-entry">
   <div class="vf-entry__num mono">{{ $num }}</div>
   <div class="vf-entry__body">
-    <h3 class="bl-subtitle vf-entry__title">
+    <h3 class="bl-note-title vf-entry__title">
       <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
     </h3>
     {{- with $page.Summary }}

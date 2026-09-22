@@ -136,7 +136,12 @@ const classCombos = (html) => {
   const set = new Set();
   const re = /class="([^"]+)"/g;
   let m;
-  while ((m = re.exec(html))) set.add(m[1].trim().split(/\s+/).sort().join(' '));
+  while ((m = re.exec(html))) {
+    // Los modificadores documentados del DS (`--slab`, `--tech`, `--gothic`…) son
+    // variantes tipográficas del mismo componente: se comparan las clases base.
+    const base = [...new Set(m[1].trim().split(/\s+/).map((c) => c.replace(/--.*$/, '')))];
+    set.add(base.sort().join(' '));
+  }
   return set;
 };
 
@@ -183,6 +188,7 @@ const classCombos = (html) => {
       bg: cs('body').backgroundColor,
       bodyFont: cs('body').fontFamily,
       h1Font: h1 ? cs(null, h1).fontFamily : null,
+      h1Transform: h1 ? cs(null, h1).textTransform : null,
       h1Size: h1 ? parseFloat(cs(null, h1).fontSize) : 0,
       rowTitleSize: document.querySelector('.vf-entry__title') ? parseFloat(cs('.vf-entry__title').fontSize) : 0,
       muted: root.getPropertyValue('--bl-muted').trim().slice(0, 40),
@@ -216,6 +222,7 @@ const classCombos = (html) => {
   record('suelo #141414', s.bg === 'rgb(20, 20, 20)', s.bg);
   record('cuerpo en Space Grotesk', /Space Grotesk/.test(s.bodyFont || ''), s.bodyFont);
   record('H1 en Jacquard24', /Jacquard24/.test(s.h1Font || ''), s.h1Font);
+  record('heroes en minúsculas (Jacquard solo así)', s.h1Transform === 'lowercase', s.h1Transform);
   record('H1 es el título mayor de la página', s.h1Size > s.rowTitleSize, `h1 ${s.h1Size}px vs fila ${s.rowTitleSize}px`);
   record('derivados del DS presentes (bl-muted / bl-line)', !!s.muted && !!s.line, `${s.muted} | ${s.line}`);
   record('eyebrow de portada en el acento mg', s.accentEyebrow === s.mgToken && s.mgToken.length > 0, `${s.accentEyebrow} == ${s.mgToken}`);
@@ -298,11 +305,11 @@ const classCombos = (html) => {
     };
   });
   record('ArticleHeader: estructura del DS (head/inner/kicker/title/deck/meta)', e.head && e.inner && /bl-article-head__kicker/.test(e.kickerClass) && /bl-article-head__title/.test(e.titleClass) && /bl-article-head__meta/.test(e.metaClass), JSON.stringify({ k: e.kickerClass, t: e.titleClass, m: e.metaClass }));
-  record('ArticleHeader: título en Jacquard24', /Jacquard24/.test(e.titleFont), e.titleFont);
-  record('ArticleHeader: deck en Techno Vibe', /Techno Vibe/.test(e.deckFont), e.deckFont);
+  record('ArticleHeader: título de entrada en Sanchez (par del blog)', /Sanchez/.test(e.titleFont), e.titleFont);
+  record('ArticleHeader: deck en IBM Plex Serif (par del blog)', /IBMPlex Serif/.test(e.deckFont), e.deckFont);
   record('prosa de entrada en IBM Plex Serif 18px', /IBMPlex Serif/.test(e.proseFont) && e.proseSize === '18px', `${e.proseFont} / ${e.proseSize}`);
   record('prosa con medida 66ch', e.proseMeasure > 560 && e.proseMeasure < 820, e.proseMeasure + 'px');
-  record('h2 de la prosa en Techno Vibe', /Techno Vibe/.test(e.proseH2Font || ''), e.proseH2Font);
+  record('h2 de la prosa en Sanchez (par del blog)', /Sanchez/.test(e.proseH2Font || ''), e.proseH2Font);
   record('TOC como placa Card del DS', e.toc === 1, e.toc);
   record('breadcrumbs', e.crumbs === 1, e.crumbs);
   record('prev/next', e.postNav >= 1, e.postNav);

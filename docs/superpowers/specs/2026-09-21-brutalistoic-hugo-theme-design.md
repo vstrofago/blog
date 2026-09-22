@@ -159,6 +159,16 @@ commitear/escalonar sin mezclar su diff con el mío. La implementación no toca
 
 ## Desviaciones conscientes sobre el diseño
 
+- **Tipografía del blog (corrección tras revisar el render, 2026-09-22).** El par del blog
+  es **Sanchez + IBM Plex Serif**: títulos y encabezados de entrada (y los mismos títulos
+  en el índice, la destacada y prev/next) en **Sanchez**, y todo su texto (cuerpo,
+  resúmenes, deck) en **IBM Plex Serif**. **Jacquard24 queda SOLO para los heroes** —H1 de
+  portada, de listas/etiquetas/búsqueda y de 404— y **siempre en minúsculas**. Corrige la
+  tabla de D3 (que ponía `gothic` en el título de entrada y Techno Vibe en deck y
+  subtítulos) y devuelve al blog el par de la rev. 1 («títulos de entrada en `slab`
+  (Sanchez)», «entradilla en IBM Plex Serif»). Uso de las variantes del propio DS:
+  `bl-article-head__title--slab`, `bl-card__title--slab`, `bl-note-title`.
+
 - **D2 / D9 en tensión sobre las fuentes.** La copia del DS se vendoriza *verbatim* (los
   15 binarios) porque `verify-vendor.mjs` exige 15 archivos y 15 `@font-face` resolviendo;
   el tema solo *usa* cinco caras. Las otras diez no se descargan nunca en el navegador.

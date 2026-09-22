@@ -20,6 +20,16 @@ img { max-width: 100%; height: auto; }
 }
 .vf-skip:focus-visible { left: var(--space-2); }
 
+/* ---------- tipografía del blog ----------
+   El blog se compone con el par del blog: títulos y encabezados en Sanchez y
+   texto en IBM Plex Serif. Jacquard24 queda SOLO para los heroes (título H1 de
+   portada, de listas y de 404) y siempre en minúsculas. */
+.vf-hero__title, .vf-list-head__title, .vf-404__title { text-transform: lowercase; }
+.bl-prose h2, .bl-prose h3, .bl-prose h4 { font-family: var(--font-sanchez); font-weight: 400; color: var(--fgplus); }
+.bl-prose h2 { font-size: 28px; line-height: 1.25; margin: var(--space-6) 0 var(--space-3); }
+.bl-prose h3 { font-size: 22px; line-height: 1.3; margin: var(--space-5) 0 var(--space-2); }
+.bl-prose h4 { font-size: 18px; line-height: 1.35; margin: var(--space-4) 0 var(--space-2); }
+
 /* ---------- chrome superior ---------- */
 .vf-header { border-bottom: var(--bw-1) solid var(--bl-line); }
 .vf-header__inner {
@@ -90,7 +100,7 @@ img { max-width: 100%; height: auto; }
 .vf-entry__title { margin: 0 0 var(--space-2); }
 .vf-entry__title a { color: var(--fgplus); text-decoration: none; }
 .vf-entry__title a:hover { color: var(--og); }
-.vf-entry__summary { margin: 0 0 var(--space-3); max-width: 66ch; font: var(--text-body); color: var(--fg); }
+.vf-entry__summary { margin: 0 0 var(--space-3); max-width: 66ch; font: var(--text-serif); color: var(--fg); }
 .vf-entry__foot { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
 .vf-meta { display: inline-flex; gap: var(--space-2); align-items: baseline; font-variant-numeric: tabular-nums; }
 .vf-meta__sep { color: var(--bl-line); }
@@ -108,7 +118,7 @@ img { max-width: 100%; height: auto; }
 /* ---------- entrada ---------- */
 .vf-article { display: block; }
 .bl-article-head { margin-bottom: var(--space-6); }
-.bl-article-head__deck { font-family: var(--font-techno-vibe-font); }
+.bl-article-head__deck { font-family: var(--font-ibmplex-serif); }
 .vf-post-foot { margin-top: var(--space-7); }
 .vf-post-foot__label { color: var(--bl-muted); margin: var(--space-5) 0 var(--space-2); }
 .vf-post-nav {
@@ -119,7 +129,7 @@ img { max-width: 100%; height: auto; }
 .vf-post-nav__item { display: block; text-decoration: none; color: var(--fg); }
 .vf-post-nav__item--next { text-align: right; }
 .vf-post-nav__item .bl-label { color: var(--bl-muted); display: block; margin-bottom: var(--space-2); }
-.vf-post-nav__title { display: block; font-size: 20px; color: var(--fgplus); }
+.vf-post-nav__title { display: block; font-family: var(--font-sanchez); font-size: 20px; line-height: 1.3; color: var(--fgplus); }
 .vf-post-nav__item:hover .vf-post-nav__title { color: var(--og); }
 
 /* ---------- migas, índice de contenido, paginador ---------- */

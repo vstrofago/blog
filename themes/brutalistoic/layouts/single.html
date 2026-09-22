@@ -2,13 +2,15 @@
 <article class="vf-article">
   {{ partial "breadcrumbs.html" . }}
 
-  {{- /* ArticleHeader del DS: kicker, H1 Jacquard24, deck Techno Vibe, meta en
-         caption, sobre dither Bayer estático y de baja opacidad. */}}
+  {{- /* ArticleHeader del DS: kicker, título, deck y meta en caption, sobre dither
+         Bayer estático y de baja opacidad. El blog se compone en el par del blog:
+         títulos en Sanchez (variante `--slab` del componente) y texto en IBM Plex
+         Serif. Jacquard24 queda para los heroes, siempre en minúsculas. */}}
   <header class="bl-article-head">
     <canvas class="bl-bayer" aria-hidden="true"></canvas>
     <div class="bl-article-head__inner">
       <p class="bl-label bl-article-head__kicker">{{ with .Section }}{{ . | upper }}{{ else }}{{ i18n "index" | upper }}{{ end }}</p>
-      <h1 class="bl-article-head__title">{{ .Title }}</h1>
+      <h1 class="bl-article-head__title bl-article-head__title--slab">{{ .Title }}</h1>
       {{- $deck := "" -}}
       {{- with .Params.deck }}{{ $deck = . }}{{ else }}{{ with .Summary }}{{ $deck = . | plainify }}{{ end }}{{ end -}}
       {{- with $deck }}
