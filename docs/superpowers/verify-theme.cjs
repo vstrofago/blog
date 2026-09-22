@@ -158,7 +158,7 @@ const classCombos = (html) => {
     if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text());
   });
   page.on('response', (r) => {
-    if (r.status() >= 400 && !/probe-code|TechnoVibeFont/.test(r.url())) httpFails.push(`${r.status()} ${r.url()}`);
+    if (r.status() >= 400 && !/probe-code|TechnoVibeFont|DFMThornyDoodleFont|DFMPenScriptFont|OpenCode/.test(r.url())) httpFails.push(`${r.status()} ${r.url()}`);
   });
 
   const walk = async () => {
@@ -234,28 +234,47 @@ const classCombos = (html) => {
   await walk();
   await page.screenshot({ path: `${SHOTS}/01-portada.png`, fullPage: true });
 
-  // Techno Vibe fuera del tema: ni declarada en el CSS, ni publicada como archivo.
-  const techno = await page.evaluate(async () => {
-    let faces = -1;
-    try {
-      faces = (await document.fonts.load("400 72px 'Techno Vibe Font'")).length;
-    } catch (e) {
-      faces = -1;
-    }
-    const inCss = [...document.styleSheets].some((sh) => {
+  // Caras podadas del tema: ni declaradas en el CSS, ni publicadas como archivo.
+  const PRUNED = [
+    ['Techno Vibe Font', 'TechnoVibeFont.otf'],
+    ['DFMThorny Doodle Font', 'DFMThornyDoodleFont.otf'],
+    ['DFMPen Script Font', 'DFMPenScriptFont.otf'],
+    ['Open Code', 'OpenCode.otf'],
+  ];
+  const prunedCss = await page.evaluate(async (families) => {
+    const faces = {};
+    for (const fam of families) {
       try {
-        return [...sh.cssRules].some((r) => /Techno Vibe/i.test(r.cssText));
+        faces[fam] = (await document.fonts.load(`400 72px '${fam}'`)).length;
       } catch (e) {
-        return false;
+        faces[fam] = -1;
       }
+    }
+    const cssText = [...document.styleSheets]
+      .map((sh) => {
+        try {
+          return [...sh.cssRules].map((r) => r.cssText).join('\n');
+        } catch (e) {
+          return '';
+        }
+      })
+      .join('\n');
+    return { faces, cssText };
+  }, PRUNED.map(([fam]) => fam));
+  const prunedChecks = [];
+  for (const [fam, file] of PRUNED) {
+    const res = await page.request.get(new URL(`vendor/brutalistoic/fonts/${file}`, BASE).href);
+    prunedChecks.push({
+      fam,
+      faces: prunedCss.faces[fam],
+      inCss: new RegExp(fam.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(prunedCss.cssText),
+      http: res.status(),
     });
-    return { faces, inCss };
-  });
-  const technoFile = await page.request.get(new URL('vendor/brutalistoic/fonts/TechnoVibeFont.otf', BASE).href);
+  }
   record(
-    'Techno Vibe fuera: sin @font-face, sin CSS y sin archivo publicado',
-    techno.faces <= 0 && !techno.inCss && technoFile.status() === 404,
-    `${techno.faces} caras / css=${techno.inCss} / HTTP ${technoFile.status()}`
+    'caras podadas (Techno Vibe, DFM×2, OpenCode): ni en el CSS ni publicadas',
+    prunedChecks.every((c) => c.faces <= 0 && !c.inCss && c.http === 404),
+    JSON.stringify(prunedChecks)
   );
 
   const fails = await page.evaluate(auditContrast);

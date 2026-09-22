@@ -153,8 +153,9 @@ commitear/escalonar sin mezclar su diff con el mío. La implementación no toca
   **Techno Vibe se retira del tema**, porque su binario no declara licencia. DFM* y
   OpenCode siguen sin licencia, pero ninguna página las usa. Detalle cara por cara en
   `themes/brutalistoic/static/vendor/brutalistoic/fonts/LICENSE.md` (+ `OFL-1.1.txt`).
-- Pendiente en el DS (`vstrofago/brutalistoic`): aplicar allí la retirada de Techno Vibe,
-  para que la copia vendorizada del blog vuelva a ser verbatim sin excepciones.
+- ~~Pendiente en el DS (`vstrofago/brutalistoic`): aplicar allí la retirada de Techno Vibe.~~
+  Descartado a propósito: el DS queda **intacto** (se trabaja con él, no sobre él). La poda
+  es del blog y se documenta en su copia vendorizada.
 - Registrar en el skill `hugo-github-pages-bilingual` lo que este tema enseñe (consumo de
   un DS React desde un sitio estático).
 
@@ -166,10 +167,13 @@ commitear/escalonar sin mezclar su diff con el mío. La implementación no toca
   los UMD de React vendorizados: el sitio no carga ya ninguna dependencia externa. El
   dither Bayer estático (canvas propio, decorativo) se queda.
 
-- **Techno Vibe fuera (2026-09-22).** La cara Techno Vibe se retira del tema —su binario
-  no declara licencia— junto con su variable, su estilo de texto, su utilidad
-  `.tech-subtitle` y su `@font-face`: es la única desviación de la copia verbatim del DS
-  (D2/D9). Detalle en `themes/brutalistoic/static/vendor/brutalistoic/fonts/LICENSE.md`.
+- **Copia podada, no verbatim (2026-09-22).** La copia del DS que viaja en el tema queda
+  podada a las caras que el blog usa: salen Techno Vibe (sin licencia en su binario),
+  DFMThorny Doodle, DFMPen Script y Open Code (sin licencia y sin uso), cada una con su
+  variable, su estilo de texto, su utilidad y su `@font-face` fuera de
+  `tokens.css`/`tokens.json`. Revierte la parte de D2 que exigía copia verbatim. **El DS
+  no se toca**: se trabaja con él, no sobre él. Detalle en
+  `themes/brutalistoic/static/vendor/brutalistoic/fonts/LICENSE.md`.
 
 - **Acerca con el diseño de una lista (2026-09-22).** Las páginas sueltas (raíz, sin
   sección) ya no usan el ArticleHeader: cabecera de lista —eyebrow + hero Jacquard en
