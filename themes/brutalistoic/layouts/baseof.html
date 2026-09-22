@@ -16,8 +16,8 @@
     </main>
     {{ partial "footer.html" . }}
   </div>
-  {{- /* Utilidades pequeñas: copiar código y pintar el dither Bayer. Nada de React
-         fuera de la isla de la portada (ver banner.html / bl-banner.js). */ -}}
+  {{- /* Utilidades pequeñas: copiar código y pintar el dither Bayer. Sin React ni
+         islas: el sitio no carga ninguna dependencia externa. */ -}}
   {{- $js := slice (resources.Get "js/bl-copy.js") (resources.Get "js/bl-bayer.js") | resources.Concat "js/bl.js" | minify | fingerprint -}}
   <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
   {{- block "scripts" . }}{{ end -}}

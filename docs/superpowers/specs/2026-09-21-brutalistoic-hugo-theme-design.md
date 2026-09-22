@@ -149,15 +149,33 @@ commitear/escalonar sin mezclar su diff con el mío. La implementación no toca
 
 - ~~Actualizar este documento a «aprobado (desarrollo autónomo autorizado)» al recibir el sí.~~ Hecho.
 - **Verificar la licencia de Techno Vibe y Jacquard24 antes de publicar el sitio (D9).**
-  Jacquard24 resuelta: SIL OFL 1.1 (The Soft Type Project Authors). **Techno Vibe sigue
-  sin licencia en su binario**, igual que DFM* y OpenCode (estas tres no las usa el tema).
-  Detalle y copyright cara por cara en
+  Resuelto el 2026-09-22: Jacquard24 es SIL OFL 1.1 (The Soft Type Project Authors) y
+  **Techno Vibe se retira del tema**, porque su binario no declara licencia. DFM* y
+  OpenCode siguen sin licencia, pero ninguna página las usa. Detalle cara por cara en
   `themes/brutalistoic/static/vendor/brutalistoic/fonts/LICENSE.md` (+ `OFL-1.1.txt`).
-  Es el único punto abierto antes de desplegar.
+- Pendiente en el DS (`vstrofago/brutalistoic`): aplicar allí la retirada de Techno Vibe,
+  para que la copia vendorizada del blog vuelva a ser verbatim sin excepciones.
 - Registrar en el skill `hugo-github-pages-bilingual` lo que este tema enseñe (consumo de
   un DS React desde un sitio estático).
 
 ## Desviaciones conscientes sobre el diseño
+
+- **Sin isla ASCII (revisión del render, 2026-09-22).** El AsciiBanner (D6) se retira del
+  blog: la portada va del hero a la destacada, sin React, sin isla diferida y sin
+  fotograma horneado. Con él se van `banner.html`, `banner-frame.html`, `bl-banner.js` y
+  los UMD de React vendorizados: el sitio no carga ya ninguna dependencia externa. El
+  dither Bayer estático (canvas propio, decorativo) se queda.
+
+- **Techno Vibe fuera (2026-09-22).** La cara Techno Vibe se retira del tema —su binario
+  no declara licencia— junto con su variable, su estilo de texto, su utilidad
+  `.tech-subtitle` y su `@font-face`: es la única desviación de la copia verbatim del DS
+  (D2/D9). Detalle en `themes/brutalistoic/static/vendor/brutalistoic/fonts/LICENSE.md`.
+
+- **Acerca con el diseño de una lista (2026-09-22).** Las páginas sueltas (raíz, sin
+  sección) ya no usan el ArticleHeader: cabecera de lista —eyebrow + hero Jacquard en
+  minúsculas— y el contenido en `.bl-prose`. La placa repetía en su deck el propio texto
+  de la página y arrastraba meta de entrada, breadcrumbs y prev/next, que no son de una
+  página.
 
 - **Tipografía del blog (corrección tras revisar el render, 2026-09-22).** El par del blog
   es **Sanchez + IBM Plex Serif**: títulos y encabezados de entrada (y los mismos títulos

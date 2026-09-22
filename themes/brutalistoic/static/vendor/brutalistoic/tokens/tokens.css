@@ -1,4 +1,7 @@
-/* brutalistoic — generated from tokens.json */
+/* brutalistoic — generated from tokens.json.
+   Desviación local del blog (2026-09-22): sin la cara Techno Vibe, cuya licencia
+   no consta en el binario. Se han quitado su variable, su estilo de texto, su
+   utilidad `.tech-subtitle` y su @font-face (el archivo no viaja). */
 :root, [data-theme="terminal"] {
   --bg: #141414; /* Page ground and every surface: cards, windows, fields and tables sit on it, set apart by a frame, never by a lighter fill. */
   --rd: #f38ba8; /* Error signal: error text, failed status, destructive actions. 8:1 on bg. Always with a word (ERR), never hue alone. */
@@ -26,7 +29,6 @@
   --bw-2: 4px; /* Focus ring and heavy marks. */
   --bw-4: 8px; /* Section rules and heavy article dividers. */
   --font-space-grotesk: 'Space Grotesk', system-ui, sans-serif;
-  --font-techno-vibe-font: 'Techno Vibe Font', 'Geist Mono', monospace;
   --font-geist-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --font-sanchez: 'Sanchez', Georgia, serif;
   --font-ibmplex-serif: 'IBMPlex Serif', Georgia, 'Times New Roman', serif;
@@ -35,7 +37,6 @@
   --font-dfmpen-script-font: 'DFMPen Script Font', cursive;
   --font-open-code: 'Open Code', 'Geist Mono', monospace;
   --text-gothic-title: 400 42px/1.5 var(--font-jacquard24); /* H1: the main title of every page, hero and slide. Jacquard24 runs small, so it is always the largest title on the page. */
-  --text-tech-subtitle: 400 28px/1.5 var(--font-techno-vibe-font); /* Subtitles and section heads (h2, h3) under a Jacquard h1, and eyebrows in media. */
   --text-slab-title: 400 32px/1.5 var(--font-sanchez); /* Titles of notes, TL;DR blocks and READMEs. Not for blog posts or heroes. */
   --text-body: 400 16px/1.5 var(--font-space-grotesk); /* Body text for everything that is not a blog entry: cards, docs, product copy, slides. */
   --text-serif: 400 16px/1.5 var(--font-ibmplex-serif); /* Blog entries only: the running text of a post, 18px/1.7 in .bl-prose. */
@@ -49,13 +50,6 @@
 .gothic-title {
   font-family: var(--font-jacquard24);
   font-size: 42px;
-  line-height: 1.5;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-.tech-subtitle {
-  font-family: var(--font-techno-vibe-font);
-  font-size: 28px;
   line-height: 1.5;
   font-weight: 400;
   letter-spacing: 0;
@@ -127,13 +121,6 @@
   font-family: "Space Grotesk";
   src: url("../fonts/SpaceGrotesk-VariableFont_wght.ttf") format("truetype");
   font-weight: 300 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Techno Vibe Font";
-  src: url("../fonts/TechnoVibeFont.otf") format("opentype");
-  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }

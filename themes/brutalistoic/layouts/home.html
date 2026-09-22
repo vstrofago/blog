@@ -23,8 +23,6 @@
     {{- end }}
   </section>
 
-  {{ partial "banner.html" . }}
-
   {{- if $list }}
   {{- partial "entry-featured.html" (dict "page" (index $list 0) "num" (printf "N.º %02d" $total)) }}
 
@@ -45,10 +43,4 @@
   {{- end }}
 
 </div>
-{{ end }}
-
-{{ define "scripts" }}
-{{- /* Única isla React del sitio: AsciiBanner, en diferido. */ -}}
-{{- $banner := resources.Get "js/bl-banner.js" | minify | fingerprint -}}
-<script src="{{ $banner.RelPermalink }}" integrity="{{ $banner.Data.Integrity }}" defer></script>
 {{ end }}

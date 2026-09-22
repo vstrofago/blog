@@ -85,15 +85,6 @@ img { max-width: 100%; height: auto; }
 .vf-section-head__link { color: var(--bl-muted); text-decoration: none; }
 .vf-section-head__link:hover { color: var(--fgplus); }
 
-/* ---------- isla del banner (AsciiBanner) ----------
-   La caja fija la geometría del propio componente: 166 columnas a 11px = 1100px
-   de ancho, 30 filas a 14px = 420px de alto. En pantallas estrechas el marco
-   ASCII se recorta por el centro, igual que haría el componente montado. */
-.vf-banner { display: flex; justify-content: center; overflow: hidden; margin: var(--space-5) 0; }
-.vf-banner__box { position: relative; flex: none; width: 1100px; height: 420px; }
-.vf-banner__box .bl-abanner--still { height: 100%; }
-.vf-banner__live { position: absolute; inset: 0; }
-
 /* ---------- índice de entradas ---------- */
 .vf-index { list-style: none; margin: 0; padding: 0; }
 .vf-entry {
@@ -219,7 +210,7 @@ img { max-width: 100%; height: auto; }
     --bl-hover: Canvas;
   }
   .vf-header, .vf-footer, .vf-skip, .vf-crumbs, .vf-toc, .vf-post-nav,
-  .vf-pager, .vf-banner, .bl-bayer, .bl-btn, .vf-tag-row { display: none !important; }
+  .vf-pager, .bl-bayer, .bl-btn, .vf-tag-row { display: none !important; }
   .bl-crt::after { display: none !important; }
   .bl-crt { color: CanvasText; }
   .bl-terminal__code .highlight pre { overflow: visible; }

@@ -1,4 +1,17 @@
 {{ define "main" }}
+{{- if not .Section -}}
+{{- /* Página suelta (Acerca): misma cabecera que una lista —eyebrow, hero en
+       Jacquard minúsculas— y el contenido. Sin la placa ArticleHeader, sin meta
+       de entrada y sin prev/next: la placa repetía en su deck el propio texto de
+       la página, y la fecha, las palabras y la navegación son de una entrada. */ -}}
+<div class="vf-frame">
+  <header class="vf-list-head">
+    <p class="bl-eyebrow">{{ .Title | lower }}</p>
+    <h1 class="bl-h1 vf-list-head__title">{{ .Title }}</h1>
+  </header>
+  <div class="bl-prose">{{ .Content }}</div>
+</div>
+{{- else -}}
 <article class="vf-article">
   {{ partial "breadcrumbs.html" . }}
 
@@ -64,4 +77,5 @@
     {{- end }}
   </footer>
 </article>
+{{- end }}
 {{ end }}

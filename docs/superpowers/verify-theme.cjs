@@ -158,7 +158,7 @@ const classCombos = (html) => {
     if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text());
   });
   page.on('response', (r) => {
-    if (r.status() >= 400 && !/probe-code/.test(r.url())) httpFails.push(`${r.status()} ${r.url()}`);
+    if (r.status() >= 400 && !/probe-code|TechnoVibeFont/.test(r.url())) httpFails.push(`${r.status()} ${r.url()}`);
   });
 
   const walk = async () => {
@@ -180,7 +180,6 @@ const classCombos = (html) => {
     const cs = (sel, el) => getComputedStyle(el || document.querySelector(sel));
     const root = getComputedStyle(document.documentElement);
     const h1 = document.querySelector('h1');
-    const still = document.querySelector('.bl-abanner--still');
     return {
       themeDoc: document.documentElement.getAttribute('data-theme'),
       themeBody: document.body.getAttribute('data-theme'),
@@ -197,13 +196,11 @@ const classCombos = (html) => {
       mgToken: root.getPropertyValue('--mg').trim(),
       emptyAnchors: document.querySelectorAll('a[href="#"]').length,
       overflow: document.documentElement.scrollWidth - window.innerWidth,
-      bannerPres: still ? still.querySelectorAll('pre').length : 0,
-      bannerInk: still ? (still.querySelectorAll('pre')[1] || { textContent: '' }).textContent.replace(/\s/g, '').length : 0,
-      bannerBox: (() => {
-        const b = document.querySelector('.vf-banner__box');
-        const r = b.getBoundingClientRect();
-        return Math.round(r.width) + 'x' + Math.round(r.height);
-      })(),
+      bannerNodes: document.querySelectorAll('[data-bl-banner], .bl-abanner, .vf-banner').length,
+      heavyScripts: performance
+        .getEntriesByType('resource')
+        .filter((r) => r.initiatorType === 'script' && !/livereload/.test(r.name) && (r.encodedBodySize || 0) > 60000)
+        .map((r) => r.name.split('/').pop()),
       canvasBayer: document.querySelectorAll('canvas.bl-bayer').length,
       bayerPainted: (() => {
         const c = document.querySelector('canvas.bl-bayer');
@@ -226,9 +223,8 @@ const classCombos = (html) => {
   record('H1 es el título mayor de la página', s.h1Size > s.rowTitleSize, `h1 ${s.h1Size}px vs fila ${s.rowTitleSize}px`);
   record('derivados del DS presentes (bl-muted / bl-line)', !!s.muted && !!s.line, `${s.muted} | ${s.line}`);
   record('eyebrow de portada en el acento mg', s.accentEyebrow === s.mgToken && s.mgToken.length > 0, `${s.accentEyebrow} == ${s.mgToken}`);
-  record('fotograma horneado: 3 capas ASCII', s.bannerPres === 3, s.bannerPres);
-  record('fotograma horneado: el logo está dibujado (no un boceto)', s.bannerInk > 200, s.bannerInk + ' glifos');
-  record('caja del banner con la geometría del DS (1100x420)', s.bannerBox === '1100x420', s.bannerBox);
+  record('portada sin isla ASCII ni banner (retirados)', s.bannerNodes === 0, s.bannerNodes + ' nodos de banner');
+  record('ningún script pesado en la portada (sin React)', s.heavyScripts.length === 0, s.heavyScripts.join(', '));
   record('dither Bayer pintado en superficies', s.canvasBayer >= 1 && s.bayerPainted > 500, `${s.canvasBayer} canvas / ${s.bayerPainted} píxeles`);
   record('destacada como Card del DS', s.featuredIsCard === true, String(s.featuredIsCard));
   record('estado del pie con palabra (OK), nunca color solo', /OK/.test(s.footerOk), s.footerOk);
@@ -238,40 +234,29 @@ const classCombos = (html) => {
   await walk();
   await page.screenshot({ path: `${SHOTS}/01-portada.png`, fullPage: true });
 
-  // La isla AsciiBanner tiene que montar de verdad y sustituir al fotograma
-  // (React + bundle del DS, en diferido, solo aquí).
-  let island = { mounted: false };
-  try {
-    await page.waitForFunction(
-      () => {
-        const m = document.querySelector('[data-bl-banner-mount]');
-        return m && !m.hidden && m.querySelector('.bl-abanner');
-      },
-      { timeout: 20000 }
-    );
-    island = await page.evaluate(() => {
-      const mount = document.querySelector('[data-bl-banner-mount]');
-      const still = document.querySelector('.bl-abanner--still');
-      const live = mount.querySelector('.bl-abanner');
-      return {
-        mounted: true,
-        shown: !mount.hidden,
-        stillHidden: still.hidden,
-        pres: live.querySelectorAll('pre').length,
-        roleImg: live.getAttribute('role') === 'img',
-        rows: live.querySelectorAll('pre')[0] ? live.querySelectorAll('pre')[0].textContent.split('\n').length : 0,
-      };
+  // Techno Vibe fuera del tema: ni declarada en el CSS, ni publicada como archivo.
+  const techno = await page.evaluate(async () => {
+    let faces = -1;
+    try {
+      faces = (await document.fonts.load("400 72px 'Techno Vibe Font'")).length;
+    } catch (e) {
+      faces = -1;
+    }
+    const inCss = [...document.styleSheets].some((sh) => {
+      try {
+        return [...sh.cssRules].some((r) => /Techno Vibe/i.test(r.cssText));
+      } catch (e) {
+        return false;
+      }
     });
-  } catch (e) {
-    island = { mounted: false, error: String(e.message).slice(0, 80) };
-  }
+    return { faces, inCss };
+  });
+  const technoFile = await page.request.get(new URL('vendor/brutalistoic/fonts/TechnoVibeFont.otf', BASE).href);
   record(
-    'isla AsciiBanner: monta y sustituye al fotograma',
-    island.mounted && island.shown && island.stillHidden && island.pres === 3 && island.roleImg,
-    JSON.stringify(island)
+    'Techno Vibe fuera: sin @font-face, sin CSS y sin archivo publicado',
+    techno.faces <= 0 && !techno.inCss && technoFile.status() === 404,
+    `${techno.faces} caras / css=${techno.inCss} / HTTP ${technoFile.status()}`
   );
-  await page.waitForTimeout(1200);
-  await page.screenshot({ path: `${SHOTS}/01b-portada-isla.png`, fullPage: true });
 
   const fails = await page.evaluate(auditContrast);
   record('contraste AA en portada', fails.length === 0, JSON.stringify(fails.slice(0, 4)));
@@ -343,6 +328,41 @@ const classCombos = (html) => {
   } else {
     record('markup de componentes (omitido)', true, 'sin dump dom.json');
   }
+
+  /* ---------- 2b. Acerca: cabecera de lista, sin placa de entrada ---------- */
+  await page.goto(`${BASE}about/`, { waitUntil: 'networkidle' });
+  const about = await page.evaluate(() => {
+    const cs = (sel) => (document.querySelector(sel) ? getComputedStyle(document.querySelector(sel)) : null);
+    return {
+      listHead: document.querySelectorAll('.vf-list-head').length,
+      hero: document.querySelectorAll('.vf-list-head .bl-h1').length,
+      heroFont: (cs('.vf-list-head__title') || {}).fontFamily,
+      heroTransform: (cs('.vf-list-head__title') || {}).textTransform,
+      eyebrow: (document.querySelector('.vf-list-head .bl-eyebrow') || { textContent: '' }).textContent.trim(),
+      articleHead: document.querySelectorAll('.bl-article-head').length,
+      prose: document.querySelectorAll('.bl-prose').length,
+      crumbs: document.querySelectorAll('.vf-crumbs').length,
+      postNav: document.querySelectorAll('.vf-post-nav').length,
+      overflow: document.documentElement.scrollWidth - window.innerWidth,
+    };
+  });
+  record(
+    'acerca: cabecera de lista, hero Jacquard y sin card de entrada',
+    about.listHead === 1 &&
+      about.hero === 1 &&
+      /Jacquard24/.test(about.heroFont || '') &&
+      about.heroTransform === 'lowercase' &&
+      about.eyebrow.length > 0 &&
+      about.articleHead === 0 &&
+      about.prose === 1 &&
+      about.crumbs === 0 &&
+      about.postNav === 0,
+    JSON.stringify(about)
+  );
+  record('acerca: sin overflow horizontal', about.overflow <= 0, about.overflow);
+  await page.screenshot({ path: `${SHOTS}/12-acerca.png`, fullPage: true });
+  const aboutFails = await page.evaluate(auditContrast);
+  record('contraste AA en acerca', aboutFails.length === 0, JSON.stringify(aboutFails.slice(0, 4)));
 
   /* ---------- 3. Búsqueda ---------- */
   await page.goto(`${BASE}search/`, { waitUntil: 'networkidle' });
@@ -434,20 +454,13 @@ const classCombos = (html) => {
   await rp.goto(BASE, { waitUntil: 'networkidle' });
   await rp.waitForTimeout(600);
   const rmState = await rp.evaluate(() => {
-    const still = document.querySelector('.bl-abanner--still');
-    const live = document.querySelector('[data-bl-banner-mount]');
     const anims = document.getAnimations().filter((a) => a.playState === 'running');
     const crt = document.querySelector('.bl-crt');
     return {
-      stillVisible: !!still && !still.hidden,
-      liveHidden: !!live && live.hidden,
-      ink: still ? (still.querySelectorAll('pre')[1] || { textContent: '' }).textContent.replace(/\s/g, '').length : 0,
       running: anims.length,
       crtAnim: crt ? getComputedStyle(crt, '::after').animationName : 'sin CRT en esta página',
     };
   });
-  record('reduced-motion: la isla NO monta, manda el fotograma', rmState.stillVisible && rmState.liveHidden, JSON.stringify(rmState));
-  record('reduced-motion: el fotograma está entero (no un dibujo a medias)', rmState.ink > 200, rmState.ink + ' glifos');
   record('reduced-motion: nada anima', rmState.running === 0, rmState.running + ' animaciones');
   await rp.screenshot({ path: `${SHOTS}/09-reduced-motion.png`, fullPage: true });
   await rm.close();
@@ -456,17 +469,12 @@ const classCombos = (html) => {
   const nj = await browser.newContext({ viewport: { width: 1400, height: 1000 }, javaScriptEnabled: false });
   const np = await nj.newPage();
   await np.goto(BASE, { waitUntil: 'domcontentloaded' });
-  const noJs = await np.evaluate(() => {
-    const still = document.querySelector('.bl-abanner--still');
-    return {
-      nav: document.querySelectorAll('.vf-nav__link').length,
-      entries: document.querySelectorAll('.vf-entry').length,
-      pres: still ? still.querySelectorAll('pre').length : 0,
-      ink: still ? (still.querySelectorAll('pre')[1] || { textContent: '' }).textContent.replace(/\s/g, '').length : 0,
-    };
-  });
-  record('sin JS: navegación e índice legibles', noJs.nav >= 2 && noJs.entries >= 1, JSON.stringify(noJs));
-  record('sin JS: el banner muestra el fotograma', noJs.pres === 3 && noJs.ink > 200, JSON.stringify(noJs));
+  const noJs = await np.evaluate(() => ({
+    nav: document.querySelectorAll('.vf-nav__link').length,
+    entries: document.querySelectorAll('.vf-entry').length,
+    hero: document.querySelectorAll('.vf-hero__title').length,
+  }));
+  record('sin JS: navegación, hero e índice legibles', noJs.nav >= 2 && noJs.entries >= 1 && noJs.hero === 1, JSON.stringify(noJs));
   await np.goto(`${BASE}search/`, { waitUntil: 'domcontentloaded' });
   const noscript = await np.evaluate(() => {
     const n = document.querySelector('noscript');
@@ -491,14 +499,13 @@ const classCombos = (html) => {
     return {
       chrome: hidden('.vf-header') && hidden('.vf-footer'),
       dither: hidden('.bl-bayer'),
-      banner: hidden('.vf-banner'),
       nav: hidden('.vf-post-nav'),
       crt: code ? getComputedStyle(code, '::after').display === 'none' : true,
       codeVisible: code ? getComputedStyle(code).display !== 'none' : true,
       bg: getComputedStyle(document.body).backgroundColor,
     };
   });
-  record('impresión: chrome, dither, banner y nav fuera', printState.chrome && printState.dither && printState.banner && printState.nav, JSON.stringify(printState));
+  record('impresión: chrome, dither y nav fuera', printState.chrome && printState.dither && printState.nav, JSON.stringify(printState));
   record('impresión: sin CRT y con el código legible en claro', printState.crt && printState.codeVisible, JSON.stringify(printState));
   await page.emulateMedia({ media: 'screen' });
 
@@ -552,7 +559,6 @@ const classCombos = (html) => {
     // == 1426); se compara contra `sans-serif`, su respaldo real de cadena.
     const cases = {
       jacquard: ["'Jacquard24'", 'serif'],
-      techno: ["'Techno Vibe Font'", 'monospace'],
       grotesk: ["'Space Grotesk'", 'sans-serif'],
       plex: ["'IBMPlex Serif'", 'Georgia'],
       geist: ["'Geist Mono'", 'monospace'],
