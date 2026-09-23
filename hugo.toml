@@ -20,8 +20,11 @@ locale = 'en-US'
     [languages.en.params]
       description = 'Notes, projects and experiments.'
       DateFormat = 'January 2, 2006'
+      [languages.en.params.mainSite]
+        name = 'Home'
+        url = 'https://vstrofago.github.io/'
       [languages.en.params.homeInfoParams]
-        Title = 'Hi, welcome to VSTROFAGO'
+        Title = "Hi, welcome to VSTROFAGO's blog"
         Content = 'Things that pass through my mind: I write when something keeps going round in my head.'
     [[languages.en.menu.main]]
       name = 'Posts'
@@ -41,8 +44,11 @@ locale = 'en-US'
     [languages.es.params]
       description = 'Notas, proyectos y experimentos.'
       DateFormat = '2006-01-02'
+      [languages.es.params.mainSite]
+        name = 'Inicio'
+        url = 'https://vstrofago.github.io/es/'
       [languages.es.params.homeInfoParams]
-        Title = 'Hola, bienvenido a VSTROFAGO'
+        Title = 'Hola, bienvenido al blog de VSTROFAGO'
         Content = 'Cosas que pasan por mi mente: escribo cuando algo me da vueltas.'
     [[languages.es.menu.main]]
       name = 'Entradas'
@@ -55,6 +61,8 @@ locale = 'en-US'
 
 [params]
   author = 'VSTROFAGO'
+  # Pestaña del navegador: «Blog» y «<entrada> · Blog»
+  tabTitle = 'Blog'
   # Contenido
   mainSections = ['posts']
   homeLimit = 5

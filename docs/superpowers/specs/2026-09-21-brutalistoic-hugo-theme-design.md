@@ -100,7 +100,7 @@ Sin JS, el sitio se ve completo y correcto.
 | Taxonomía / término | `taxonomy`, `term` | badges con contador, filas |
 | Búsqueda | `search` | `.bl-field` con prompt `>`; resultados en filas; estado en `caption` |
 | 404 | `404` | placa con `Frame` (HUD corners) + enlaces; sin marco nativo |
-| Chrome | `_partials` | cabecera: `Logo` (SVG inline) + wordmark + nav + idioma; pie: línea de estado mono (`caption`) con palabra de estado. Sin toggle de tema |
+| Chrome | `_partials` | cabecera: `Mark` (9x9, SVG inline en `og`) + wordmark en minúsculas y Geist Mono (como la página principal) + nav con enlace «Inicio ↗» a la página principal + idioma; la pestaña del navegador dice «Blog» (`params.tabTitle`); pie: línea de estado mono (`caption`) con palabra de estado. Sin toggle de tema |
 
 ## Verificación (criterio de aceptación)
 

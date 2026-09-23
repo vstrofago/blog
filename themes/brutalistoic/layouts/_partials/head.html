@@ -1,11 +1,13 @@
 {{- /* Cabecera del documento. Orden de CSS: primero tokens.css y bundle.css tal cual
        (sin pipeline: tokens.css resuelve las @font-face en ../fonts/ y un concat lo
        rompería), después la capa de sitio del tema. */ -}}
-{{- $title := site.Title -}}
+{{- /* La pestaña lleva params.tabTitle ("Blog"); site.Title queda para la marca. */ -}}
+{{- $site := site.Params.tabTitle | default site.Title -}}
+{{- $title := $site -}}
 {{- if .IsHome -}}
-  {{- with site.Params.tagline }}{{ $title = printf "%s · %s" site.Title . }}{{ end -}}
+  {{- with site.Params.tagline }}{{ $title = printf "%s · %s" $site . }}{{ end -}}
 {{- else -}}
-  {{- $title = printf "%s · %s" .Title site.Title -}}
+  {{- $title = printf "%s · %s" .Title $site -}}
 {{- end -}}
 {{- $description := "" -}}
 {{- with .Description -}}

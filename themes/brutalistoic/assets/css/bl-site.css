@@ -37,8 +37,10 @@ img { max-width: 100%; height: auto; }
   gap: var(--space-4); padding: var(--space-4) 0; flex-wrap: wrap;
 }
 .vf-brand { display: inline-flex; align-items: center; gap: var(--space-3); color: var(--fgplus); text-decoration: none; }
-.vf-brand .bl-logo { width: var(--space-6); height: var(--space-6); }
-.vf-brand__mark { color: var(--fgplus); }
+/* Mark: el bundle vendorizado es anterior a `.bl-mark`, así que su base estática vive aquí. */
+.vf-brand__mark { display: inline-flex; line-height: 0; color: var(--og); }
+.vf-brand__mark .bl-mark__svg { display: block; flex: none; }
+.vf-brand__name { font-family: var(--font-geist-mono); font-size: 19px; letter-spacing: .01em; color: var(--fgplus); }
 .vf-chrome { display: flex; align-items: center; gap: var(--space-5); flex-wrap: wrap; }
 .vf-nav__list { display: flex; gap: var(--space-5); list-style: none; margin: 0; padding: 0; }
 .vf-nav__link { color: var(--bl-muted); text-decoration: none; transition: color .15s; }
