@@ -13,9 +13,6 @@ other = "Notes"
 [posts]
 other = "entries"
 
-[indexLabel]
-other = "Essays and field notes"
-
 [allEntries]
 other = "All notes"
 
@@ -105,9 +102,6 @@ other = "Topic"
 
 [writtenBy]
 other = "Written by"
-
-[plateCaption]
-other = "Ordered dither, 8×8 Bayer matrix."
 
 [themeToLight]
 other = "Switch to the light theme"

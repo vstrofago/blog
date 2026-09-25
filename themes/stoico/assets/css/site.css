@@ -27,7 +27,7 @@ main:focus { outline: none; }
 .st-wordmark { display: inline-flex; align-items: center; gap: calc(var(--wordmark-size) * 0.45); font-family: var(--font-pixel); font-size: var(--wordmark-size); line-height: 1; letter-spacing: -0.01em; color: var(--fg); }
 .st-icon-svg { flex: none; display: inline-block; }
 /* motion.css paints the Mark in --animation-foreground, which is always the dark-theme
-   ink. Outside a dark plate it follows the text colour instead. */
+   ink. Outside the ink byline square it follows the text colour instead. */
 .st-wordmark .animation-mark, .ed-404__mark .animation-mark { color: inherit; }
 /* base.css styles every `.stoico a` (0,1,1), above the single-class components; restate
    what an anchor-rendered component needs. */
@@ -124,13 +124,6 @@ main:focus { outline: none; }
   .ed-article__title { font-size: clamp(36px, 10.5vw, 56px); line-height: 1; }
   .ed-article__dek { font-size: 19px; }
 }
-
-/* The plate: a 1:2 grid, the image in the wider column, off the reading axis. */
-.ed-plate { display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-6); margin-bottom: var(--space-9); }
-.ed-plate .st-frame__media { background: var(--ink); }
-.plate { position: absolute; inset: 0; }
-.plate .bayer-field { color: var(--gray-600); -webkit-mask-image: none; mask-image: none; }
-@media (max-width: 720px) { .ed-plate { grid-template-columns: minmax(0, 1fr); margin-bottom: var(--space-8); } .ed-plate > div:first-child { display: none; } }
 
 /* Reading type: Plex Serif 20/1.72 in a 680px column. Section heads in Geist.
    Prefixed with .stoico where base.css zeroes margins on h1–h4 and p. */

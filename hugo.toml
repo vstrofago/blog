@@ -27,8 +27,8 @@ locale = 'en-US'
         name = 'Portfolio'
         url = 'https://vstrofago.github.io/'
       [languages.en.params.homeInfoParams]
-        Title = 'Writing, slowly.'
-        Content = 'On software, attention and whatever keeps going round in my head. When there is something to say.'
+        Title = 'Blog'
+        Content = 'Things that pass through my mind: I write when something keeps going round in my head.'
     [[languages.en.menu.main]]
       name = 'Archive'
       url = 'posts/'
@@ -52,8 +52,8 @@ locale = 'en-US'
         name = 'Portafolio'
         url = 'https://vstrofago.github.io/es/'
       [languages.es.params.homeInfoParams]
-        Title = 'Escribir, despacio.'
-        Content = 'Sobre software, atención y lo que me sigue dando vueltas en la cabeza. Cuando hay algo que decir.'
+        Title = 'Blog'
+        Content = 'Cosas que pasan por mi mente: escribo cuando algo me da vueltas.'
     [[languages.es.menu.main]]
       name = 'Archivo'
       url = 'posts/'

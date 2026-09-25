@@ -4,7 +4,7 @@
 {{- $limit := site.Params.homeLimit | default 5 -}}
 {{- $info := site.Params.homeInfoParams -}}
 <div class="ed-wide ed-index">
-  {{ partial "page-head.html" (dict "index" (i18n "notes") "label" (i18n "indexLabel") "title" ($info.Title | default site.Title) "lead" ($info.Content | markdownify)) }}
+  {{ partial "page-head.html" (dict "title" ($info.Title | default site.Title) "lead" ($info.Content | markdownify)) }}
 
   {{- with site.Taxonomies.tags.ByCount }}
   <nav class="ed-topics" aria-label="{{ i18n "tags" }}">

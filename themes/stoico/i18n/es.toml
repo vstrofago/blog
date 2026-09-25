@@ -13,9 +13,6 @@ other = "Notas"
 [posts]
 other = "entradas"
 
-[indexLabel]
-other = "Ensayos y notas de campo"
-
 [allEntries]
 other = "Todas las notas"
 
@@ -105,9 +102,6 @@ other = "Tema"
 
 [writtenBy]
 other = "Escrito por"
-
-[plateCaption]
-other = "Tramado ordenado, matriz de Bayer 8×8."
 
 [themeToLight]
 other = "Cambiar al tema claro"

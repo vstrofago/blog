@@ -36,7 +36,7 @@ themes/stoico/                     # the theme: layouts, css, js, i18n, static
   layouts/_markup/                 # code blocks (Stoico Code block) and figures (Stoico Frame)
   assets/css/stoico/               # the design system's tokens/ and components/, verbatim
   assets/css/                      # chroma.css (syntax colours on tokens) + site.css (layout)
-  assets/js/                       # stoico.js (theme, progress, copy, Bayer plate) + search.js
+  assets/js/                       # stoico.js (theme, reading progress, copy) + search.js
   data/octicons.json               # the Octicon paths the theme uses
   static/fonts/                    # self-hosted WOFF2 subsets + licences
   static/img/                      # favicon (svg + png 180) and the 1200x630 Open Graph card
@@ -51,12 +51,11 @@ scripts/publish-theme.sh           # one-way export of themes/plano to its own r
 `themes/stoico` follows **Stoico** (built in Claude Design): one philosophy, four voices.
 The blog is the **Editorial** voice in mode **E01 Literary**:
 
-- Notes index: a pixel headline ("Writing, slowly."), a serif lead, topics as tags, then a
-  numbered list separated by hairlines (number · title and dek · date, minutes, topic).
-- A note: a reading-progress hairline, the title in Geist Pixel, an italic serif dek, a
-  plate set off the reading axis (the post's `image`, or a still Bayer dither seeded from
-  the title), then the body in IBM Plex Serif 20/1.72 in a 680px column. The foot carries
-  the topics, a byline with the pixel star and "Copy link", and previous / next.
+- Notes index: the headline "Blog" in Geist Pixel and a one-line serif lead, topics as tags,
+  then a numbered list separated by hairlines (number · title and dek · date, minutes, topic).
+- A note is only text: a reading-progress hairline, the title in Geist Pixel, an italic serif
+  dek, then the body in IBM Plex Serif 20/1.72 in a 680px column. The foot carries the
+  topics, a byline with the pixel star and "Copy link", and previous / next.
 - Type has one job per face: Geist Pixel for headlines and the name *vstrofago* (always
   lowercase), Geist for interface and section heads, Geist Mono for labels and code, IBM
   Plex Serif for reading.
@@ -71,7 +70,7 @@ so font URLs follow `baseURL`). Don't edit those files; copy them again when the
 changes. Everything else in `site.css` uses tokens only.
 
 Front matter the theme understands, beyond Hugo's own: `deck` (the dek; defaults to the
-summary), `image` / `imageAlt` / `caption` (the lead plate), `noPlate: true` (no plate).
+summary).
 
 ## Adding content
 
