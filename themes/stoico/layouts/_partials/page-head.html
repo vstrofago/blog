@@ -1,0 +1,6 @@
+{{- /* Header of an index page: label, pixel headline, serif lead. */ -}}
+<header class="ed-page-head">
+  <p class="st-label">{{ with .index }}<span class="st-label__index">{{ . }}</span>{{ end }}{{ .label }}</p>
+  <h1 class="ed-display{{ if .small }} ed-display--s{{ end }}">{{ .title }}</h1>
+  {{- with .lead }}<div class="ed-lead">{{ . }}</div>{{ end }}
+</header>

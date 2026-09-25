@@ -1,0 +1,9 @@
+{{- /* Stoico <Frame>: radius 0, a mono index ("Fig. 02", counted after the lead plate)
+       and the Markdown title as caption. */ -}}
+{{- $alt := .PlainText | default .Text -}}
+<figure class="st-frame ed-figure">
+  <div class="st-frame__media"><img src="{{ .Destination | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"></div>
+  {{- with .Title }}
+  <figcaption class="st-frame__caption"><span class="st-frame__index">Fig. {{ printf "%02d" (add $.Ordinal 2) }}</span><span>{{ . }}</span></figcaption>
+  {{- end }}
+</figure>

@@ -1,0 +1,10 @@
+{{ define "main" }}
+{{- /* The star building itself, again and again: something is still being made here. */ -}}
+<div class="ed-wide ed-index ed-404">
+  <span class="ed-404__mark">{{ partial "mark.html" (dict "size" 54 "motion" "build") }}</span>
+  <p class="st-label"><span class="st-label__index">404</span>{{ i18n "notes" }}</p>
+  <h1 class="ed-display ed-display--s">{{ i18n "notFoundTitle" }}</h1>
+  <p class="ed-lead">{{ i18n "notFoundText" }}</p>
+  <p><a class="st-btn st-btn--primary" href="{{ site.Home.RelPermalink }}">{{ partial "icon.html" (dict "name" "arrow-left" "size" 14) }}{{ i18n "backHome" }}</a></p>
+</div>
+{{ end }}

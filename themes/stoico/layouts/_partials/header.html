@@ -1,0 +1,29 @@
+{{- /* Editorial header (EdHeader): the wordmark, "Notes" beside it in subtle sans, and a
+       quiet nav on the right: the menu, search, language, theme. No sticky glass: a
+       reading room keeps its chrome out of the way. */ -}}
+<header class="ed-header">
+  <div class="ed-wide ed-header__inner">
+    <a class="ed-header__brand" href="{{ site.Home.RelPermalink }}" aria-label="vstrofago · {{ i18n "notes" }}">
+      {{ partial "wordmark.html" (dict "size" 16) }}
+      <span class="ed-header__section" aria-hidden="true">{{ i18n "notes" }}</span>
+    </a>
+    <nav class="ed-header__nav" aria-label="{{ i18n "menu" }}">
+      {{- range site.Menus.main }}
+      {{- $active := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) }}
+      <a href="{{ .URL | relLangURL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
+      {{- end }}
+      {{- with site.Params.mainSite }}
+      <a class="ed-header__out" href="{{ .url }}">{{ .name }}{{ partial "icon.html" (dict "name" "arrow-up-right" "size" 12) }}</a>
+      {{- end }}
+    </nav>
+    <div class="ed-header__tools">
+      <a class="st-btn st-btn--ghost st-btn--s st-btn--icon" href="{{ "search/" | relLangURL }}">{{ partial "icon.html" (dict "name" "search" "size" 14 "label" (i18n "search")) }}</a>
+      {{- if hugo.IsMultilingual }}{{ partial "lang-switch.html" . }}{{ end }}
+      <button class="st-btn st-btn--ghost st-btn--s st-btn--icon theme-toggle" type="button" data-theme-toggle
+        data-label-light="{{ i18n "themeToLight" }}" data-label-dark="{{ i18n "themeToDark" }}" aria-label="{{ i18n "themeToLight" }}">
+        <span class="theme-toggle__sun">{{ partial "icon.html" (dict "name" "sun" "size" 14) }}</span>
+        <span class="theme-toggle__moon">{{ partial "icon.html" (dict "name" "moon" "size" 14) }}</span>
+      </button>
+    </div>
+  </div>
+</header>

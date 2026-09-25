@@ -1,0 +1,7 @@
+{{- /* Octicon (16px grid) tinted with currentColor. Usage:
+       partial "icon.html" (dict "name" "arrow-up-right" "size" 14)
+       Functional only; hidden from assistive tech unless given a "label". */ -}}
+{{- $size := .size | default 16 -}}
+{{- with index hugo.Data.octicons .name -}}
+<svg class="st-icon-svg" viewBox="0 0 16 16" width="{{ $size }}" height="{{ $size }}" fill="currentColor" focusable="false"{{ with $.label }} role="img" aria-label="{{ . }}"{{ else }} aria-hidden="true"{{ end }}>{{ . | safeHTML }}</svg>
+{{- end -}}

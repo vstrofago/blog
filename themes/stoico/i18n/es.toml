@@ -1,0 +1,126 @@
+# Interface copy, Stoico voice: sentence case, calm, no exclamation marks.
+# Every key exists in en.toml and es.toml.
+
+[skipToContent]
+other = "Saltar al contenido"
+
+[menu]
+other = "Principal"
+
+[notes]
+other = "Notas"
+
+[posts]
+other = "entradas"
+
+[indexLabel]
+other = "Ensayos y notas de campo"
+
+[allEntries]
+other = "Todas las notas"
+
+[backToNotes]
+other = "Todas las notas"
+
+[readingTime]
+other = "{{ .Count }} min"
+
+[words]
+other = "{{ .Count }} palabras"
+
+[updated]
+other = "Actualizado"
+
+[toc]
+other = "Contenido"
+
+[tags]
+other = "Temas"
+
+[prevPost]
+other = "Nota anterior"
+
+[nextPost]
+other = "Nota siguiente"
+
+[newer]
+other = "Más recientes"
+
+[older]
+other = "Anteriores"
+
+[page]
+other = "Página {{ .Count }}"
+
+[notFoundTitle]
+other = "Aquí no hay nada."
+
+[notFoundText]
+other = "Esta dirección no está en el índice. La página nunca existió, o se movió."
+
+[backHome]
+other = "Volver a las notas"
+
+[langSwitch]
+other = "Idioma"
+
+[copyCode]
+other = "Copiar"
+
+[copied]
+other = "Copiado"
+
+[copyLink]
+other = "Copiar enlace"
+
+[linkCopied]
+other = "Enlace copiado"
+
+[search]
+other = "Buscar"
+
+[searchPlaceholder]
+other = "Buscar en las notas"
+
+[searchNoResultsPrefix]
+other = "Nada coincide con"
+
+[searchResultsLabel]
+other = "notas"
+
+[searchNoJs]
+other = "La búsqueda corre en tu navegador, así que necesita JavaScript. El índice crudo está en index.json."
+
+[noPosts]
+other = "Todavía no hay nada escrito."
+
+[rss]
+other = "RSS"
+
+[allTags]
+other = "Todos los temas"
+
+[entriesIn]
+other = "Tema"
+
+[writtenBy]
+other = "Escrito por"
+
+[plateCaption]
+other = "Tramado ordenado, matriz de Bayer 8×8."
+
+[themeToLight]
+other = "Cambiar al tema claro"
+
+[themeToDark]
+other = "Cambiar al tema oscuro"
+
+[footerNote]
+other = "Escrito despacio, con una terminal y demasiado café."
+
+[backToTop]
+other = "Volver arriba"
+
+[elsewhere]
+other = "Otros lados"
+

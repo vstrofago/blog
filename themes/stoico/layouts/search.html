@@ -1,0 +1,26 @@
+{{ define "main" }}
+<div class="ed-wide ed-index">
+  {{ partial "page-head.html" (dict "index" (i18n "notes") "label" (i18n "search") "title" .Title "small" true) }}
+  <div class="ed-search" data-search
+    data-index="{{ "index.json" | relLangURL }}"
+    data-label-none="{{ i18n "searchNoResultsPrefix" }}"
+    data-label-count="{{ i18n "searchResultsLabel" }}">
+    <label class="st-field">
+      <span class="visually-hidden">{{ i18n "search" }}</span>
+      <span class="st-input">
+        {{ partial "icon.html" (dict "name" "search" "size" 16) }}
+        <input type="search" data-search-input placeholder="{{ i18n "searchPlaceholder" }}" autocomplete="off" spellcheck="false" autofocus>
+        <kbd class="st-kbd">/</kbd>
+      </span>
+    </label>
+    <p class="ed-search__status st-label" data-search-status aria-live="polite"></p>
+    <ol class="ed-rows" data-search-results></ol>
+    <noscript><p class="ed-empty">{{ i18n "searchNoJs" }}</p></noscript>
+  </div>
+</div>
+{{ end }}
+
+{{ define "scripts" }}
+{{- $search := resources.Get "js/search.js" | minify | fingerprint -}}
+<script src="{{ $search.RelPermalink }}" integrity="{{ $search.Data.Integrity }}" defer></script>
+{{ end }}

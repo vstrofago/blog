@@ -1,0 +1,126 @@
+# Interface copy, Stoico voice: sentence case, calm, no exclamation marks.
+# Every key exists in en.toml and es.toml.
+
+[skipToContent]
+other = "Skip to content"
+
+[menu]
+other = "Main"
+
+[notes]
+other = "Notes"
+
+[posts]
+other = "entries"
+
+[indexLabel]
+other = "Essays and field notes"
+
+[allEntries]
+other = "All notes"
+
+[backToNotes]
+other = "All notes"
+
+[readingTime]
+other = "{{ .Count }} min"
+
+[words]
+other = "{{ .Count }} words"
+
+[updated]
+other = "Updated"
+
+[toc]
+other = "Contents"
+
+[tags]
+other = "Topics"
+
+[prevPost]
+other = "Previous note"
+
+[nextPost]
+other = "Next note"
+
+[newer]
+other = "Newer"
+
+[older]
+other = "Older"
+
+[page]
+other = "Page {{ .Count }}"
+
+[notFoundTitle]
+other = "Nothing here."
+
+[notFoundText]
+other = "This address is not in the index. The page never existed, or it moved."
+
+[backHome]
+other = "Back to the notes"
+
+[langSwitch]
+other = "Language"
+
+[copyCode]
+other = "Copy"
+
+[copied]
+other = "Copied"
+
+[copyLink]
+other = "Copy link"
+
+[linkCopied]
+other = "Link copied"
+
+[search]
+other = "Search"
+
+[searchPlaceholder]
+other = "Search the notes"
+
+[searchNoResultsPrefix]
+other = "Nothing matches"
+
+[searchResultsLabel]
+other = "notes"
+
+[searchNoJs]
+other = "Search runs in your browser, so it needs JavaScript. The raw index is at index.json."
+
+[noPosts]
+other = "Nothing written yet."
+
+[rss]
+other = "RSS"
+
+[allTags]
+other = "All topics"
+
+[entriesIn]
+other = "Topic"
+
+[writtenBy]
+other = "Written by"
+
+[plateCaption]
+other = "Ordered dither, 8×8 Bayer matrix."
+
+[themeToLight]
+other = "Switch to the light theme"
+
+[themeToDark]
+other = "Switch to the dark theme"
+
+[footerNote]
+other = "Written slowly, with a terminal and too much coffee."
+
+[backToTop]
+other = "Back to top"
+
+[elsewhere]
+other = "Elsewhere"
+

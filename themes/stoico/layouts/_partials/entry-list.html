@@ -1,0 +1,14 @@
+{{- /* Numbered list of notes. Numbers count up from the oldest note in `all`, three digits
+       ("014"), so a note keeps its number across pages. */ -}}
+{{- $all := .all -}}
+{{- $pages := .pages -}}
+{{- $total := len $all -}}
+{{- $numbers := dict -}}
+{{- range $i, $p := $all -}}
+  {{- $numbers = merge $numbers (dict $p.RelPermalink (printf "%03d" (sub $total $i))) -}}
+{{- end -}}
+<ol class="ed-rows">
+  {{- range $pages }}
+  {{- partial "entry-row.html" (dict "page" . "num" (index $numbers .RelPermalink)) }}
+  {{- end }}
+</ol>

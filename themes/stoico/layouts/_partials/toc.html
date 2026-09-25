@@ -1,0 +1,8 @@
+{{- /* Contents: a quiet disclosure inside the reading column. Only when there is enough
+       of a contents list to be worth it. Works without JS. */ -}}
+{{- if and site.Params.ShowToc (gt (len .TableOfContents) 80) -}}
+<details class="ed-toc"{{ if site.Params.TocOpen }} open{{ end }}>
+  <summary class="st-label">{{ i18n "toc" }}</summary>
+  <nav aria-label="{{ i18n "toc" }}">{{ .TableOfContents }}</nav>
+</details>
+{{- end -}}

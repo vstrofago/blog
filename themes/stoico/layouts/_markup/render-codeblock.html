@@ -1,0 +1,11 @@
+{{- /* Stoico <Code block>: sunken surface, 8px radius, the language as a mono label top
+       right, and a copy button. Chroma's highlighting is mapped to tokens in chroma.css. */ -}}
+{{- $highlight := transform.HighlightCodeBlock . -}}
+{{- $lang := .Type | default "text" -}}
+<figure class="ed-code">
+  <figcaption class="ed-code__bar">
+    <span>{{ $lang }}</span>
+    <button type="button" class="st-btn st-btn--ghost st-btn--s" data-copy-code data-done="{{ i18n "copied" }}">{{ i18n "copyCode" }}</button>
+  </figcaption>
+  {{- $highlight.Wrapped }}
+</figure>

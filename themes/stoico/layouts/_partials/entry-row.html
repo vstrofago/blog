@@ -1,0 +1,20 @@
+{{- /* One row of the notes index (EdIndex): a mono number, the title in Geist 500, the
+       dek in Plex Serif, and date / minutes / topic stacked on the right in mono.
+       Rows are separated by hairlines; hover warms the title to --accent-strong. */ -}}
+{{- $page := .page -}}
+{{- $num := .num | default "" -}}
+{{- $dek := $page.Params.deck | default ($page.Summary | plainify | truncate 160) -}}
+<li class="ed-row">
+  <a class="ed-row__link" href="{{ $page.RelPermalink }}">
+    <span class="ed-row__num">{{ $num }}</span>
+    <span class="ed-row__body">
+      <span class="ed-row__title">{{ $page.Title }}</span>
+      {{- with $dek }}<span class="ed-row__dek">{{ . }}</span>{{ end }}
+    </span>
+    <span class="ed-row__meta">
+      <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date | time.Format "Jan 2006" }}</time>
+      <span>{{ i18n "readingTime" (dict "Count" $page.ReadingTime) }}</span>
+      {{- with $page.GetTerms "tags" }}<span>{{ (index . 0).LinkTitle }}</span>{{ end }}
+    </span>
+  </a>
+</li>

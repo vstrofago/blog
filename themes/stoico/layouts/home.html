@@ -1,0 +1,25 @@
+{{ define "main" }}
+{{- $sections := site.Params.mainSections | default (slice "posts") -}}
+{{- $pages := where site.RegularPages "Section" "in" $sections -}}
+{{- $limit := site.Params.homeLimit | default 5 -}}
+{{- $info := site.Params.homeInfoParams -}}
+<div class="ed-wide ed-index">
+  {{ partial "page-head.html" (dict "index" (i18n "notes") "label" (i18n "indexLabel") "title" ($info.Title | default site.Title) "lead" ($info.Content | markdownify)) }}
+
+  {{- with site.Taxonomies.tags.ByCount }}
+  <nav class="ed-topics" aria-label="{{ i18n "tags" }}">
+    {{- range first 8 . }}<a class="st-tag" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }}</a>{{ end }}
+    <a class="st-tag ed-topics__all" href="{{ "tags/" | relLangURL }}">{{ i18n "allTags" }}</a>
+  </nav>
+  {{- end }}
+
+  {{- if $pages }}
+  {{ partial "entry-list.html" (dict "all" $pages "pages" (first $limit $pages)) }}
+  {{- if gt (len $pages) $limit }}
+  <p class="ed-more"><a class="st-btn st-btn--secondary" href="{{ "posts/" | relLangURL }}">{{ i18n "allEntries" }}{{ partial "icon.html" (dict "name" "arrow-right" "size" 14) }}</a></p>
+  {{- end }}
+  {{- else }}
+  <p class="ed-empty">{{ i18n "noPosts" }}</p>
+  {{- end }}
+</div>
+{{ end }}

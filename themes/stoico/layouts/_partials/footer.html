@@ -1,0 +1,23 @@
+<footer class="ed-footer">
+  <div class="ed-wide ed-footer__grid">
+    <div class="ed-footer__brand">
+      {{ partial "wordmark.html" (dict "size" 16) }}
+      <p>{{ i18n "footerNote" }}</p>
+    </div>
+    <nav class="ed-footer__col" aria-label="{{ i18n "notes" }}">
+      <h2 class="st-label">{{ i18n "notes" }}</h2>
+      {{- range site.Menus.main }}<a href="{{ .URL | relLangURL }}">{{ .Name }}</a>{{ end }}
+      <a href="{{ "search/" | relLangURL }}">{{ i18n "search" }}</a>
+      {{- with site.Home.OutputFormats.Get "rss" }}<a href="{{ .RelPermalink }}">{{ i18n "rss" }}</a>{{ end }}
+    </nav>
+    <nav class="ed-footer__col" aria-label="{{ i18n "elsewhere" }}">
+      <h2 class="st-label">{{ i18n "elsewhere" }}</h2>
+      {{- with site.Params.mainSite }}<a href="{{ .url }}">{{ .name }}</a>{{ end }}
+      {{- range site.Params.socialIcons }}{{ if findRE "://" .url }}<a href="{{ .url }}" rel="me noopener">{{ .name }}</a>{{ end }}{{ end }}
+    </nav>
+  </div>
+  <div class="ed-wide ed-footer__base">
+    <span class="st-label">© {{ now.Year }} vstrofago</span>
+    <a class="ed-footer__top" href="#top">{{ i18n "backToTop" }}{{ partial "icon.html" (dict "name" "arrow-up" "size" 12) }}</a>
+  </div>
+</footer>
