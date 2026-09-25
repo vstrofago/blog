@@ -1,0 +1,14 @@
+{{ define "main" }}
+<div class="ed-wide ed-index">
+  {{ partial "page-head.html" (dict "index" (i18n "notes") "label" (printf "%d" (len .Pages)) "title" .Title "small" true) }}
+  {{- if .Pages }}
+  <ul class="ed-topics ed-topics--cloud">
+    {{- range .Pages }}
+    <li><a class="st-tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}<span class="ed-topics__count">{{ len .Pages }}</span></a></li>
+    {{- end }}
+  </ul>
+  {{- else }}
+  <p class="ed-empty">{{ i18n "noPosts" }}</p>
+  {{- end }}
+</div>
+{{ end }}

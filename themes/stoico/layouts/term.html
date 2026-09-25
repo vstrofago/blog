@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div class="ed-wide ed-index">
+  {{- $lead := "" }}{{ with .Content }}{{ $lead = . }}{{ end }}
+  {{ partial "page-head.html" (dict "index" (i18n "entriesIn") "label" (printf "%d %s" (len .Pages) (i18n "posts")) "title" .Title "lead" $lead "small" true) }}
+  {{- if .Paginator.Pages }}
+  {{ partial "entry-list.html" (dict "all" .Pages "pages" .Paginator.Pages) }}
+  {{ partial "pager.html" .Paginator }}
+  {{- else }}
+  <p class="ed-empty">{{ i18n "noPosts" }}</p>
+  {{- end }}
+  <p class="ed-more"><a class="st-btn st-btn--ghost st-btn--s" href="{{ (printf "%s/" .Data.Plural) | relLangURL }}">{{ partial "icon.html" (dict "name" "arrow-left" "size" 14) }}{{ i18n "allTags" }}</a></p>
+</div>
+{{ end }}

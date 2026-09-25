@@ -1,0 +1,12 @@
+{{- /* Language: this page's translation when there is one, else the other language's
+       home. Never links to a 404. The current language is text, not a link. */ -}}
+{{- $translations := .Translations -}}
+{{- if not $translations }}{{ $translations = site.Home.Translations }}{{ end -}}
+{{- with $translations }}
+<nav class="ed-lang" aria-label="{{ i18n "langSwitch" }}">
+  <span aria-current="true">{{ site.Language.Lang | upper }}</span>
+  {{- range . }}
+  <a href="{{ .RelPermalink }}" hreflang="{{ .Language.Lang }}" lang="{{ .Language.Lang }}" title="{{ .Language.Label }}">{{ .Language.Lang | upper }}</a>
+  {{- end }}
+</nav>
+{{- end }}

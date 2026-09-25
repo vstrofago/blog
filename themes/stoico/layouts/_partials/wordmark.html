@@ -1,0 +1,3 @@
+{{- /* "vstrofago" in Geist Pixel led by the pixel star. Always lowercase. */ -}}
+{{- $size := .size | default 16 -}}
+<span class="st-wordmark" style="--wordmark-size:{{ $size }}px">{{ partial "mark.html" (dict "size" (math.Round (mul $size 0.9))) }}<span>vstrofago</span></span>

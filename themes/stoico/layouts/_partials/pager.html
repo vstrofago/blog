@@ -1,0 +1,8 @@
+{{- $p := . -}}
+{{- if gt $p.TotalPages 1 }}
+<nav class="ed-pager" aria-label="{{ i18n "page" (dict "Count" $p.PageNumber) }}">
+  {{- if $p.HasPrev }}<a class="st-btn st-btn--secondary st-btn--s" href="{{ $p.Prev.URL }}" rel="prev">{{ partial "icon.html" (dict "name" "arrow-left" "size" 14) }}{{ i18n "newer" }}</a>{{ else }}<span></span>{{ end }}
+  <span class="st-label">{{ $p.PageNumber }} / {{ $p.TotalPages }}</span>
+  {{- if $p.HasNext }}<a class="st-btn st-btn--secondary st-btn--s" href="{{ $p.Next.URL }}" rel="next">{{ i18n "older" }}{{ partial "icon.html" (dict "name" "arrow-right" "size" 14) }}</a>{{ else }}<span></span>{{ end }}
+</nav>
+{{- end }}

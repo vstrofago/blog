@@ -1,10 +1,12 @@
 baseURL = 'https://vstrofago.github.io/blog/'
-title = 'VSTROFAGO'
-theme = 'brutalistoic'
+title = 'vstrofago'
+theme = 'stoico'
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
-enableEmoji = true
+# Topics keep the case they are written in (Stoico: sentence case, never Title Case).
+capitalizeListTitles = false
+enableEmoji = false
 locale = 'en-US'
 
 [pagination]
@@ -15,19 +17,20 @@ locale = 'en-US'
     label = 'English'
     locale = 'en-US'
     contentDir = 'content/en'
-    title = 'VSTROFAGO'
+    title = 'vstrofago'
     weight = 1
     [languages.en.params]
-      description = 'Notes, projects and experiments.'
+      description = 'Essays and field notes by vstrofago: on software, attention and whatever keeps going round in my head.'
+      tabTitle = 'Notes · vstrofago'
       DateFormat = 'January 2, 2006'
       [languages.en.params.mainSite]
-        name = 'Home'
+        name = 'Portfolio'
         url = 'https://vstrofago.github.io/'
       [languages.en.params.homeInfoParams]
-        Title = "Hi, welcome to VSTROFAGO's blog"
+        Title = 'Blog'
         Content = 'Things that pass through my mind: I write when something keeps going round in my head.'
     [[languages.en.menu.main]]
-      name = 'Posts'
+      name = 'Archive'
       url = 'posts/'
       weight = 10
     [[languages.en.menu.main]]
@@ -39,19 +42,20 @@ locale = 'en-US'
     label = 'Español'
     locale = 'es-ES'
     contentDir = 'content/es'
-    title = 'VSTROFAGO'
+    title = 'vstrofago'
     weight = 2
     [languages.es.params]
-      description = 'Notas, proyectos y experimentos.'
+      description = 'Ensayos y notas de campo de vstrofago: sobre software, atención y lo que me sigue dando vueltas en la cabeza.'
+      tabTitle = 'Notas · vstrofago'
       DateFormat = '2006-01-02'
       [languages.es.params.mainSite]
-        name = 'Inicio'
+        name = 'Portafolio'
         url = 'https://vstrofago.github.io/es/'
       [languages.es.params.homeInfoParams]
-        Title = 'Hola, bienvenido al blog de VSTROFAGO'
+        Title = 'Blog'
         Content = 'Cosas que pasan por mi mente: escribo cuando algo me da vueltas.'
     [[languages.es.menu.main]]
-      name = 'Entradas'
+      name = 'Archivo'
       url = 'posts/'
       weight = 10
     [[languages.es.menu.main]]
@@ -60,9 +64,7 @@ locale = 'en-US'
       weight = 20
 
 [params]
-  author = 'VSTROFAGO'
-  # Pestaña del navegador: «Blog» y «<entrada> · Blog»
-  tabTitle = 'Blog'
+  author = 'vstrofago'
   # Contenido
   mainSections = ['posts']
   homeLimit = 5
@@ -79,8 +81,11 @@ locale = 'en-US'
   name = 'GitHub'
   url = 'https://github.com/vstrofago'
 [[params.socialIcons]]
-  name = 'RSS'
-  url = 'index.xml'
+  name = 'X'
+  url = 'https://x.com/vstrofago'
+[[params.socialIcons]]
+  name = 'YouTube'
+  url = 'https://www.youtube.com/@vstrofago'
 
 [markup]
   [markup.goldmark]

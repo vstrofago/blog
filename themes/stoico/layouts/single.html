@@ -1,0 +1,65 @@
+{{ define "main" }}
+{{- if not .Section -}}
+{{- /* A standalone page (About): the same head as an index, then the prose column. */ -}}
+<div class="ed-wide ed-index ed-index--page">
+  {{ partial "page-head.html" (dict "index" (i18n "notes") "label" .Title "title" .Title "small" true) }}
+</div>
+<div class="ed-read ed-prose">{{ .Content }}</div>
+<div class="ed-spacer"></div>
+{{- else -}}
+{{- /* A note (EdArticle): only text. A reading-progress hairline, a 680px header with
+       the pixel title and an italic serif dek, then the body in Plex Serif 20/1.72. */ -}}
+{{- $dek := .Params.deck | default (.Summary | plainify) -}}
+<div class="ed-progress" data-progress aria-hidden="true"></div>
+<article class="ed-article">
+  <header class="ed-read ed-article__head">
+    <a class="ed-back" href="{{ with .Parent }}{{ .RelPermalink }}{{ else }}{{ site.Home.RelPermalink }}{{ end }}">{{ partial "icon.html" (dict "name" "arrow-left" "size" 14) }}{{ i18n "backToNotes" }}</a>
+    <p class="st-label">{{ partial "post-meta.html" (dict "page" .) }}</p>
+    <h1 class="ed-article__title">{{ .Title }}</h1>
+    {{- with $dek }}<p class="ed-article__dek">{{ . }}</p>{{ end }}
+  </header>
+
+  <div class="ed-read">
+    {{ partial "toc.html" . }}
+    <div class="ed-prose">{{ .Content }}</div>
+
+    <footer class="ed-article__foot">
+      {{- with .GetTerms "tags" }}
+      <ul class="ed-topics" aria-label="{{ i18n "tags" }}">
+        {{- range . }}<li><a class="st-tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>{{ end }}
+      </ul>
+      {{- end }}
+      <div class="ed-byline">
+        <span class="ed-byline__mark">{{ partial "mark.html" (dict "size" 18) }}</span>
+        <div class="ed-byline__text">
+          <span>{{ i18n "writtenBy" }} <span class="ed-byline__name">vstrofago</span></span>
+          <span class="ed-byline__date">{{ .Date | time.Format "January 2006" }}</span>
+        </div>
+        <button class="st-btn st-btn--ghost st-btn--s ed-byline__copy" type="button" data-copy-link data-done="{{ i18n "linkCopied" }}">{{ partial "icon.html" (dict "name" "link" "size" 14) }}<span>{{ i18n "copyLink" }}</span></button>
+      </div>
+
+      {{- if site.Params.ShowPostNavLinks }}
+      {{- /* PrevInSection is the older note, NextInSection the newer one. */}}
+      {{- $prev := .PrevInSection }}{{ $next := .NextInSection }}
+      {{- if or $prev $next }}
+      <nav class="ed-post-nav" aria-label="{{ i18n "prevPost" }} / {{ i18n "nextPost" }}">
+        {{- with $prev }}
+        <a class="ed-post-nav__item" href="{{ .RelPermalink }}" rel="prev">
+          <span class="st-label">{{ i18n "prevPost" }}</span>
+          <span class="ed-post-nav__title">{{ .Title }}</span>
+        </a>
+        {{- else }}<span></span>{{ end }}
+        {{- with $next }}
+        <a class="ed-post-nav__item ed-post-nav__item--next" href="{{ .RelPermalink }}" rel="next">
+          <span class="st-label">{{ i18n "nextPost" }}</span>
+          <span class="ed-post-nav__title">{{ .Title }}</span>
+        </a>
+        {{- end }}
+      </nav>
+      {{- end }}
+      {{- end }}
+    </footer>
+  </div>
+</article>
+{{- end }}
+{{ end }}

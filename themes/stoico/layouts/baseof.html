@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{{- /* Stoico, Editorial voice ("A quiet room for reading."), mode E01 Literary.
+       Dark is the default; light is data-theme="light" on <html>. The inline script
+       applies a stored choice before first paint; the key is shared with the landing
+       (same origin), so the choice carries between the two sites. */ -}}
+<html lang="{{ site.Language.Lang }}" data-theme="dark" data-voice="editorial">
+<head>
+  <meta charset="utf-8">
+  <script>(function(){var d=document.documentElement;d.classList.add('js');try{if(localStorage.getItem('stoico-theme')==='light'){d.dataset.theme='light';}}catch(e){}})();</script>
+  {{ partial "head.html" . }}
+</head>
+<body class="stoico">
+  <a class="skip-link" href="#main">{{ i18n "skipToContent" }}</a>
+  <div id="top">
+    {{ partial "header.html" . }}
+    <main id="main" tabindex="-1">
+      {{- block "main" . }}{{ end -}}
+    </main>
+    {{ partial "footer.html" . }}
+  </div>
+  {{- $js := resources.Get "js/stoico.js" | minify | fingerprint -}}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+  {{- block "scripts" . }}{{ end -}}
+</body>
+</html>

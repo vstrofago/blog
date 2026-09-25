@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="ed-wide ed-index">
+  {{- $lead := "" }}{{ with .Content }}{{ $lead = . }}{{ end }}
+  {{ partial "page-head.html" (dict "index" (i18n "notes") "label" (printf "%d %s" (len .Pages) (i18n "posts")) "title" .Title "lead" $lead "small" true) }}
+  {{- if .Paginator.Pages }}
+  {{ partial "entry-list.html" (dict "all" .Pages "pages" .Paginator.Pages) }}
+  {{ partial "pager.html" .Paginator }}
+  {{- else }}
+  <p class="ed-empty">{{ i18n "noPosts" }}</p>
+  {{- end }}
+  {{- if site.Params.ShowRssButtonInSectionTermList }}{{ with .OutputFormats.Get "rss" }}
+  <p class="ed-more"><a class="st-btn st-btn--ghost st-btn--s" href="{{ .RelPermalink }}">{{ partial "icon.html" (dict "name" "rss" "size" 14) }}{{ i18n "rss" }}</a></p>
+  {{- end }}{{ end }}
+</div>
+{{ end }}
