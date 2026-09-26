@@ -1,6 +1,6 @@
 {{- /* One row of the notes index (EdIndex): a mono number, the title in Geist 500, the
        dek in Plex Serif, and date / minutes / topic stacked on the right in mono.
-       Rows are separated by hairlines; hover warms the title to --accent-strong. */ -}}
+       Rows are separated by hairlines; hover dims the title to --fg-muted. */ -}}
 {{- $page := .page -}}
 {{- $num := .num | default "" -}}
 {{- $dek := $page.Params.deck | default ($page.Summary | plainify | truncate 160) -}}
