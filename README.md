@@ -59,10 +59,11 @@ The blog is the **Editorial** voice in mode **E01 Literary**:
 - Type has one job per face: Geist Pixel for headlines and the name *vstrofago* (always
   lowercase), Geist for interface and section heads, Geist Mono for labels and code, IBM
   Plex Serif for reading.
-- Colour is neutral; the one accent, Ember, appears as a hover on titles and in code
-  strings. Dark is the default; the moon/sun button switches to paper. The choice is stored
-  under `stoico-theme`, shared with the landing on the same origin, and applied before
-  first paint.
+- No colour: the blog is black and white. Stoico's one accent (Ember) is mapped to `--fg`
+  in `site.css`; title hovers dim to `--fg-muted` and code is monochrome. Dark is the
+  default; the moon/sun button switches to paper. The choice is stored under
+  `stoico-theme`, shared with the landing on the same origin, and applied before first
+  paint.
 
 `assets/css/stoico/` is a verbatim copy of the system's `tokens/` and `components/`
 (its `tokens/fonts.css` is replaced by the `@font-face` rules in `_partials/head.html`,
